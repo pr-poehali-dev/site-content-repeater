@@ -1,15 +1,140 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import Icon from '@/components/ui/icon';
+import { useToast } from '@/hooks/use-toast';
+
+interface NewsItem {
+  id: number;
+  title: string;
+  description: string;
+  date: string;
+}
+
+const AUTH_URL = 'https://functions.poehali.dev/57939455-bc01-4c35-80f2-ae3c5ae8c00b';
+const NEWS_URL = 'https://functions.poehali.dev/338ace17-3dab-4601-bb7b-627b4fda416d';
 
 const Index = () => {
   const [copied, setCopied] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
+  const [showAdmin, setShowAdmin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
+  const [newNews, setNewNews] = useState({ title: '', description: '', date: '' });
+  const { toast } = useToast();
+
+  useEffect(() => {
+    fetchNews();
+    if (token) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        setIsAdmin(payload.is_admin);
+      } catch (e) {
+        console.error('Invalid token');
+      }
+    }
+  }, [token]);
+
+  const fetchNews = async () => {
+    try {
+      const res = await fetch(NEWS_URL);
+      const data = await res.json();
+      setNews(data);
+    } catch (error) {
+      toast({ title: 'Ошибка загрузки новостей', variant: 'destructive' });
+    }
+  };
 
   const copyIP = () => {
     navigator.clipboard.writeText('dayzm.my-craft.cc');
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleAuth = async () => {
+    try {
+      const res = await fetch(AUTH_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: isLogin ? 'login' : 'register',
+          email,
+          password
+        })
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        setToken(data.token);
+        setIsAdmin(data.is_admin);
+        setShowAuth(false);
+        toast({ title: isLogin ? 'Вход выполнен' : 'Регистрация успешна' });
+      } else {
+        toast({ title: data.error || 'Ошибка', variant: 'destructive' });
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка подключения', variant: 'destructive' });
+    }
+  };
+
+  const handleSaveNews = async () => {
+    if (!token) return;
+    
+    try {
+      const res = await fetch(NEWS_URL, {
+        method: editingNews ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Auth-Token': token
+        },
+        body: JSON.stringify(editingNews ? { ...editingNews } : newNews)
+      });
+      
+      if (res.ok) {
+        fetchNews();
+        setEditingNews(null);
+        setNewNews({ title: '', description: '', date: '' });
+        toast({ title: 'Новость сохранена' });
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка сохранения', variant: 'destructive' });
+    }
+  };
+
+  const handleDeleteNews = async (id: number) => {
+    if (!token) return;
+    
+    try {
+      const res = await fetch(NEWS_URL, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Auth-Token': token
+        },
+        body: JSON.stringify({ id })
+      });
+      
+      if (res.ok) {
+        fetchNews();
+        toast({ title: 'Новость удалена' });
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка удаления', variant: 'destructive' });
+    }
+  };
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    setToken(null);
+    setIsAdmin(false);
   };
 
   return (
@@ -24,8 +149,24 @@ const Index = () => {
       
       <div className="relative z-10">
         <header className="bg-[#4a4a4a]/80 backdrop-blur-sm py-6 border-b border-white/10">
-          <div className="container mx-auto px-4">
-            <h1 className="text-5xl font-black text-white text-center tracking-wider">DayZM</h1>
+          <div className="container mx-auto px-4 flex items-center justify-between">
+            <h1 className="text-5xl font-black text-white tracking-wider">DayZM</h1>
+            {!token ? (
+              <Button onClick={() => setShowAuth(true)} className="bg-[#b4ff00] hover:bg-[#9de000] text-black">
+                Войти
+              </Button>
+            ) : (
+              <div className="flex gap-2">
+                {isAdmin && (
+                  <Button onClick={() => setShowAdmin(true)} className="bg-[#b4ff00] hover:bg-[#9de000] text-black">
+                    Админка
+                  </Button>
+                )}
+                <Button onClick={logout} variant="outline" className="text-white border-white">
+                  Выйти
+                </Button>
+              </div>
+            )}
           </div>
         </header>
 
@@ -43,12 +184,6 @@ const Index = () => {
                 >
                   <Icon name="Copy" className="mr-2" size={20} />
                   {copied ? 'Скопировано!' : 'Скопировать IP'}
-                </Button>
-                <Button 
-                  className="bg-[#b4ff00] hover:bg-[#9de000] text-black font-semibold px-6 py-6 text-lg"
-                >
-                  <Icon name="Settings" className="mr-2" size={20} />
-                  Админка
                 </Button>
               </div>
             </div>
@@ -83,50 +218,20 @@ const Index = () => {
               </h3>
               
               <div className="grid md:grid-cols-3 gap-6">
-                <Card className="bg-[#3a3a3a]/60 border-2 border-[#b4ff00]/20 hover:border-[#b4ff00] transition-all p-6">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="w-16 h-16 bg-[#b4ff00] rounded-full flex items-center justify-center">
-                      <span className="text-4xl">❓</span>
+                {news.map((item) => (
+                  <Card key={item.id} className="bg-[#3a3a3a]/60 border-2 border-[#b4ff00]/20 hover:border-[#b4ff00] transition-all p-6">
+                    <div className="flex items-center justify-center mb-4">
+                      <div className="w-16 h-16 bg-[#b4ff00] rounded-full flex items-center justify-center">
+                        <span className="text-4xl">❓</span>
+                      </div>
                     </div>
-                  </div>
-                  <h4 className="text-lg font-bold text-white text-center mb-3">Обновление 1.5</h4>
-                  <p className="text-white/70 text-sm text-center">
-                    Добавлены новые квесты и улучшена система крафта
-                  </p>
-                  <div className="text-center mt-4">
-                    <span className="text-[#b4ff00] text-xs">15 октября 2025</span>
-                  </div>
-                </Card>
-
-                <Card className="bg-[#3a3a3a]/60 border-2 border-[#b4ff00]/20 hover:border-[#b4ff00] transition-all p-6">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="w-16 h-16 bg-[#b4ff00] rounded-full flex items-center justify-center">
-                      <span className="text-4xl">❓</span>
+                    <h4 className="text-lg font-bold text-white text-center mb-3">{item.title}</h4>
+                    <p className="text-white/70 text-sm text-center">{item.description}</p>
+                    <div className="text-center mt-4">
+                      <span className="text-[#b4ff00] text-xs">{item.date}</span>
                     </div>
-                  </div>
-                  <h4 className="text-lg font-bold text-white text-center mb-3">Новый ивент</h4>
-                  <p className="text-white/70 text-sm text-center">
-                    Хэллоуин ивент стартует на следующей неделе!
-                  </p>
-                  <div className="text-center mt-4">
-                    <span className="text-[#b4ff00] text-xs">10 октября 2025</span>
-                  </div>
-                </Card>
-
-                <Card className="bg-[#3a3a3a]/60 border-2 border-[#b4ff00]/20 hover:border-[#b4ff00] transition-all p-6">
-                  <div className="flex items-center justify-center mb-4">
-                    <div className="w-16 h-16 bg-[#b4ff00] rounded-full flex items-center justify-center">
-                      <span className="text-4xl">❓</span>
-                    </div>
-                  </div>
-                  <h4 className="text-lg font-bold text-white text-center mb-3">Набор в команду</h4>
-                  <p className="text-white/70 text-sm text-center">
-                    Ищем модераторов и помощников администрации
-                  </p>
-                  <div className="text-center mt-4">
-                    <span className="text-[#b4ff00] text-xs">5 октября 2025</span>
-                  </div>
-                </Card>
+                  </Card>
+                ))}
               </div>
             </div>
 
@@ -168,6 +273,110 @@ const Index = () => {
           </div>
         </main>
       </div>
+
+      <Dialog open={showAuth} onOpenChange={setShowAuth}>
+        <DialogContent className="bg-[#2a2a2a] border-[#b4ff00]">
+          <DialogHeader>
+            <DialogTitle className="text-white">{isLogin ? 'Вход' : 'Регистрация'}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+            />
+            <Input
+              type="password"
+              placeholder="Пароль"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+            />
+            <Button onClick={handleAuth} className="w-full bg-[#b4ff00] hover:bg-[#9de000] text-black">
+              {isLogin ? 'Войти' : 'Зарегистрироваться'}
+            </Button>
+            <button
+              onClick={() => setIsLogin(!isLogin)}
+              className="w-full text-[#b4ff00] text-sm hover:underline"
+            >
+              {isLogin ? 'Нет аккаунта? Зарегистрируйтесь' : 'Есть аккаунт? Войдите'}
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showAdmin} onOpenChange={setShowAdmin}>
+        <DialogContent className="bg-[#2a2a2a] border-[#b4ff00] max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-white">Управление новостями</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <h3 className="text-[#b4ff00] font-bold">Добавить новость</h3>
+              <Input
+                placeholder="Заголовок"
+                value={newNews.title}
+                onChange={(e) => setNewNews({ ...newNews, title: e.target.value })}
+                className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+              />
+              <Input
+                placeholder="Описание"
+                value={newNews.description}
+                onChange={(e) => setNewNews({ ...newNews, description: e.target.value })}
+                className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+              />
+              <Input
+                placeholder="Дата (например: 15 октября 2025)"
+                value={newNews.date}
+                onChange={(e) => setNewNews({ ...newNews, date: e.target.value })}
+                className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+              />
+              <Button onClick={handleSaveNews} className="bg-[#b4ff00] hover:bg-[#9de000] text-black">
+                Добавить
+              </Button>
+            </div>
+
+            <div className="space-y-3">
+              <h3 className="text-[#b4ff00] font-bold">Текущие новости</h3>
+              {news.map((item) => (
+                <div key={item.id} className="bg-[#3a3a3a] p-4 rounded space-y-2">
+                  <Input
+                    value={editingNews?.id === item.id ? editingNews.title : item.title}
+                    onChange={(e) => setEditingNews({ ...item, title: e.target.value })}
+                    className="bg-[#4a4a4a] text-white border-[#b4ff00]/30"
+                  />
+                  <Input
+                    value={editingNews?.id === item.id ? editingNews.description : item.description}
+                    onChange={(e) => setEditingNews({ ...item, description: e.target.value })}
+                    className="bg-[#4a4a4a] text-white border-[#b4ff00]/30"
+                  />
+                  <Input
+                    value={editingNews?.id === item.id ? editingNews.date : item.date}
+                    onChange={(e) => setEditingNews({ ...item, date: e.target.value })}
+                    className="bg-[#4a4a4a] text-white border-[#b4ff00]/30"
+                  />
+                  <div className="flex gap-2">
+                    {editingNews?.id === item.id ? (
+                      <Button onClick={handleSaveNews} size="sm" className="bg-[#b4ff00] text-black">
+                        Сохранить
+                      </Button>
+                    ) : (
+                      <Button onClick={() => setEditingNews(item)} size="sm" className="bg-[#b4ff00] text-black">
+                        Редактировать
+                      </Button>
+                    )}
+                    <Button onClick={() => handleDeleteNews(item.id)} size="sm" variant="destructive">
+                      Удалить
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
