@@ -318,27 +318,6 @@ const Index = () => {
 
             <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
               <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
-                Наши соцсети
-              </h3>
-              
-              <div className="flex gap-4 justify-center flex-wrap">
-                {socialLinks.map((link) => (
-                  <a
-                    key={link.id}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-[#3a3a3a]/90 hover:bg-[#4a4a4a] border-2 border-[#b4ff00]/20 hover:border-[#b4ff00] p-4 rounded-lg transition-all flex items-center gap-3"
-                  >
-                    <Icon name={link.icon} className="text-[#b4ff00]" size={24} />
-                    <span className="text-white font-semibold">{link.name}</span>
-                  </a>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
-              <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
                 Что нужно для игры на проекте?
               </h3>
               
@@ -370,6 +349,27 @@ const Index = () => {
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
+              <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
+                Наши соцсети
+              </h3>
+              
+              <div className="flex gap-4 justify-center flex-wrap">
+                {socialLinks.map((link) => (
+                  <a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#3a3a3a]/90 hover:bg-[#4a4a4a] border-2 border-[#b4ff00]/20 hover:border-[#b4ff00] p-4 rounded-lg transition-all flex items-center gap-3"
+                  >
+                    <Icon name={link.icon} className="text-[#b4ff00]" size={24} />
+                    <span className="text-white font-semibold">{link.name}</span>
+                  </a>
+                ))}
               </div>
             </div>
           </div>
