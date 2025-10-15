@@ -98,6 +98,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     elif action == 'login':
         email = body_data.get('email')
         password = body_data.get('password')
+        ip_address = event.get('requestContext', {}).get('identity', {}).get('sourceIp', 'unknown')
         
         if not email or not password:
             cur.close()
@@ -106,6 +107,22 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'statusCode': 400,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
                 'body': json.dumps({'error': 'Email and password required'}),
+                'isBase64Encoded': False
+            }
+        
+        cur.execute(
+            "SELECT COUNT(*) FROM login_attempts WHERE email = %s AND attempt_time > NOW() - INTERVAL '15 minutes'",
+            (email,)
+        )
+        attempts_count = cur.fetchone()[0]
+        
+        if attempts_count >= 5:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 429,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Too many login attempts. Try again in 15 minutes'}),
                 'isBase64Encoded': False
             }
         
@@ -135,6 +152,11 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         if not password_valid:
+            cur.execute(
+                "INSERT INTO login_attempts (email, ip_address) VALUES (%s, %s)",
+                (email, ip_address)
+            )
+            conn.commit()
             cur.close()
             conn.close()
             return {
