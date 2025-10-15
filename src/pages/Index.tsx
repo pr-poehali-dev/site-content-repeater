@@ -140,10 +140,10 @@ const Index = () => {
   return (
     <div className="min-h-screen relative">
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="fixed inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: 'url(https://images.unsplash.com/photo-1614465655168-f296bd310dcf?q=80&w=2000)',
-          filter: 'blur(4px) brightness(0.4)'
+          backgroundImage: 'url(https://cdn.poehali.dev/files/8c4af068-2738-4d1a-b8eb-62a3ed89f878.jpg)',
+          filter: 'blur(2px) brightness(0.5)'
         }}
       />
       

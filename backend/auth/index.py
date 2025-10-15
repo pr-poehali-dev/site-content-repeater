@@ -84,7 +84,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'body': json.dumps({'token': token, 'email': user[1], 'is_admin': user[2]}),
                 'isBase64Encoded': False
             }
-        except psycopg2.errors.UniqueViolation:
+        except Exception:
             conn.rollback()
             cur.close()
             conn.close()
@@ -112,7 +112,29 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         cur.execute("SELECT id, email, password_hash, is_admin FROM users WHERE email = %s", (email,))
         user = cur.fetchone()
         
-        if not user or not bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8')):
+        if not user:
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Invalid credentials'}),
+                'isBase64Encoded': False
+            }
+        
+        try:
+            password_valid = bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8'))
+        except (ValueError, AttributeError):
+            cur.close()
+            conn.close()
+            return {
+                'statusCode': 401,
+                'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+                'body': json.dumps({'error': 'Invalid password format'}),
+                'isBase64Encoded': False
+            }
+        
+        if not password_valid:
             cur.close()
             conn.close()
             return {
