@@ -387,6 +387,66 @@ const Index = () => {
             </div>
 
             <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
+              <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-6">
+                Партнёрская программа
+              </h3>
+              <div className="max-w-3xl mx-auto">
+                <div className="bg-gradient-to-r from-[#b4ff00]/10 to-[#c86400]/10 p-6 rounded-lg border-2 border-[#b4ff00]/30">
+                  <div className="flex items-start gap-4 mb-4">
+                    <div className="bg-[#b4ff00] p-3 rounded">
+                      <Icon name="Users" className="text-black" size={32} />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-2xl font-bold text-white mb-3">Стань партнёром проекта!</h4>
+                      <p className="text-white/80 mb-4">
+                        Мы приглашаем к сотрудничеству контент-мейкеров с YouTube, VK Видео и других платформ. 
+                        Создавай контент о нашем сервере и получай уникальные преимущества!
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-4 mb-6">
+                    <div className="bg-[#3a3a3a]/60 p-4 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Icon name="Star" className="text-[#b4ff00]" size={20} />
+                        <h5 className="text-white font-semibold">Что мы предлагаем:</h5>
+                      </div>
+                      <ul className="text-white/70 text-sm space-y-1">
+                        <li>• Эксклюзивный контент для видео</li>
+                        <li>• Особый статус на сервере</li>
+                        <li>• Промокоды для твоей аудитории</li>
+                        <li>• Поддержка от администрации</li>
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-[#3a3a3a]/60 p-4 rounded-lg">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Icon name="CheckCircle" className="text-[#b4ff00]" size={20} />
+                        <h5 className="text-white font-semibold">Требования:</h5>
+                      </div>
+                      <ul className="text-white/70 text-sm space-y-1">
+                        <li>• Активный канал/аккаунт</li>
+                        <li>• Качественный контент</li>
+                        <li>• Регулярные видео о сервере</li>
+                        <li>• Позитивное отношение к проекту</li>
+                      </ul>
+                    </div>
+                  </div>
+                  
+                  <div className="text-center">
+                    <p className="text-white/60 text-sm mb-3">
+                      Заинтересовало предложение? Свяжись с администрацией в наших соцсетях!
+                    </p>
+                    <Button className="bg-[#b4ff00] hover:bg-[#9de000] text-black font-semibold px-8 py-6 text-lg">
+                      <Icon name="MessageCircle" className="mr-2" size={20} />
+                      Связаться с нами
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
               <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
                 Наши соцсети
               </h3>
