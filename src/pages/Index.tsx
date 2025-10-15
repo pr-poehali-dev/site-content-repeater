@@ -40,6 +40,7 @@ const Index = () => {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [editingSocial, setEditingSocial] = useState<SocialLink | null>(null);
   const [newSocial, setNewSocial] = useState({ name: '', url: '', icon: 'Link', display_order: 0 });
+  const [adminTab, setAdminTab] = useState<'news' | 'social'>('news');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -434,11 +435,31 @@ const Index = () => {
       <Dialog open={showAdmin} onOpenChange={setShowAdmin}>
         <DialogContent className="bg-[#2a2a2a] border-[#b4ff00] max-w-2xl max-h-[80vh] overflow-y-auto w-[95vw] sm:w-full">
           <DialogHeader>
-            <DialogTitle className="text-white">Управление новостями</DialogTitle>
+            <DialogTitle className="text-white">Админ-панель</DialogTitle>
           </DialogHeader>
+          
+          <div className="flex gap-2 border-b border-[#b4ff00]/30 pb-4">
+            <Button 
+              onClick={() => setAdminTab('news')}
+              className={adminTab === 'news' ? 'bg-[#b4ff00] text-black' : 'bg-[#3a3a3a] text-white hover:bg-[#4a4a4a]'}
+            >
+              <Icon name="Newspaper" className="mr-2" size={18} />
+              Новости
+            </Button>
+            <Button 
+              onClick={() => setAdminTab('social')}
+              className={adminTab === 'social' ? 'bg-[#b4ff00] text-black' : 'bg-[#3a3a3a] text-white hover:bg-[#4a4a4a]'}
+            >
+              <Icon name="Share2" className="mr-2" size={18} />
+              Соцсети
+            </Button>
+          </div>
+
           <div className="space-y-6">
-            <div className="space-y-3">
-              <h3 className="text-[#b4ff00] font-bold">Добавить новость</h3>
+            {adminTab === 'news' && (
+              <>
+                <div className="space-y-3">
+                  <h3 className="text-[#b4ff00] font-bold">Добавить новость</h3>
               <Input
                 placeholder="Заголовок"
                 value={newNews.title}
@@ -498,12 +519,13 @@ const Index = () => {
                 </div>
               ))}
             </div>
+              </>
+            )}
 
-            <div className="border-t border-[#b4ff00]/30 pt-6 mt-6">
-              <h3 className="text-[#b4ff00] font-bold mb-4">Управление соцсетями</h3>
-              
-              <div className="space-y-3 mb-4">
-                <h4 className="text-white text-sm">Добавить соцсеть</h4>
+            {adminTab === 'social' && (
+              <>
+                <div className="space-y-3">
+                  <h3 className="text-[#b4ff00] font-bold">Добавить соцсеть</h3>
                 <Input
                   placeholder="Название (например: Telegram)"
                   value={newSocial.name}
@@ -528,7 +550,7 @@ const Index = () => {
               </div>
 
               <div className="space-y-3">
-                <h4 className="text-white text-sm">Текущие соцсети</h4>
+                <h3 className="text-[#b4ff00] font-bold">Текущие соцсети</h3>
                 {socialLinks.map((link) => (
                   <div key={link.id} className="bg-[#3a3a3a] p-4 rounded space-y-2">
                     <Input
@@ -566,7 +588,8 @@ const Index = () => {
                   </div>
                 ))}
               </div>
-            </div>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
