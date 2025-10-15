@@ -174,7 +174,7 @@ const Index = () => {
           <div className="max-w-4xl mx-auto space-y-8">
             <div className="text-center">
               <div className="inline-block bg-[#b4ff00] px-8 py-4 mb-6">
-                <h2 className="text-2xl font-bold text-black">IP: dayzm.my-craft.cc</h2>
+                <h2 className="text-2xl font-bold text-black">IP: dayzm.my-craft.cc.</h2>
               </div>
 
               <div className="flex gap-4 justify-center">
