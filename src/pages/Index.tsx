@@ -432,7 +432,7 @@ const Index = () => {
       </Dialog>
 
       <Dialog open={showAdmin} onOpenChange={setShowAdmin}>
-        <DialogContent className="bg-[#2a2a2a] border-[#b4ff00] max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="bg-[#2a2a2a] border-[#b4ff00] max-w-2xl max-h-[80vh] overflow-y-auto w-[95vw] sm:w-full">
           <DialogHeader>
             <DialogTitle className="text-white">Управление новостями</DialogTitle>
           </DialogHeader>
