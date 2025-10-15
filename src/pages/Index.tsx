@@ -186,6 +186,18 @@ const Index = () => {
                   {copied ? 'Скопировано!' : 'Скопировать IP'}
                 </Button>
               </div>
+
+              {isAdmin && (
+                <Card className="bg-red-600/90 border-0 p-4 mt-6 inline-block">
+                  <div className="flex items-center gap-3">
+                    <Icon name="Shield" className="text-white" size={24} />
+                    <div className="text-left">
+                      <div className="text-white font-bold text-sm">РЕЖИМ АДМИНА</div>
+                      <div className="text-white/80 text-xs">Это окно видите только вы</div>
+                    </div>
+                  </div>
+                </Card>
+              )}
             </div>
 
             <div className="grid md:grid-cols-2 gap-4">
