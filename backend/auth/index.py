@@ -134,18 +134,18 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             }
         
         cur.execute(
-            "SELECT COUNT(*) FROM login_attempts WHERE email = %s AND attempt_time > NOW() - INTERVAL '15 minutes'",
+            "SELECT COUNT(*) FROM login_attempts WHERE email = %s AND attempt_time > NOW() - INTERVAL '1 hour'",
             (email,)
         )
         attempts_count = cur.fetchone()[0]
         
-        if attempts_count >= 5:
+        if attempts_count >= 10:
             cur.close()
             conn.close()
             return {
                 'statusCode': 429,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Too many login attempts. Try again in 15 minutes'}),
+                'body': json.dumps({'error': 'Too many login attempts. Try again in 1 hour'}),
                 'isBase64Encoded': False
             }
         
