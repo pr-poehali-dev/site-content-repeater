@@ -13,8 +13,17 @@ interface NewsItem {
   date: string;
 }
 
+interface SocialLink {
+  id: number;
+  name: string;
+  url: string;
+  icon: string;
+  display_order: number;
+}
+
 const AUTH_URL = 'https://functions.poehali.dev/57939455-bc01-4c35-80f2-ae3c5ae8c00b';
 const NEWS_URL = 'https://functions.poehali.dev/338ace17-3dab-4601-bb7b-627b4fda416d';
+const SOCIAL_URL = 'https://functions.poehali.dev/305f29bd-7d8d-4a52-83f6-164143e43a4a';
 
 const Index = () => {
   const [copied, setCopied] = useState(false);
@@ -28,10 +37,14 @@ const Index = () => {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
   const [newNews, setNewNews] = useState({ title: '', description: '', date: '' });
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
+  const [editingSocial, setEditingSocial] = useState<SocialLink | null>(null);
+  const [newSocial, setNewSocial] = useState({ name: '', url: '', icon: 'Link', display_order: 0 });
   const { toast } = useToast();
 
   useEffect(() => {
     fetchNews();
+    fetchSocialLinks();
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
@@ -49,6 +62,16 @@ const Index = () => {
       setNews(data);
     } catch (error) {
       toast({ title: 'Ошибка загрузки новостей', variant: 'destructive' });
+    }
+  };
+
+  const fetchSocialLinks = async () => {
+    try {
+      const res = await fetch(SOCIAL_URL);
+      const data = await res.json();
+      setSocialLinks(data);
+    } catch (error) {
+      console.error('Ошибка загрузки соцсетей');
     }
   };
 
@@ -125,6 +148,52 @@ const Index = () => {
       if (res.ok) {
         fetchNews();
         toast({ title: 'Новость удалена' });
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка удаления', variant: 'destructive' });
+    }
+  };
+
+  const handleSaveSocial = async () => {
+    if (!token) return;
+    
+    try {
+      const res = await fetch(SOCIAL_URL, {
+        method: editingSocial ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Auth-Token': token
+        },
+        body: JSON.stringify(editingSocial ? { ...editingSocial } : newSocial)
+      });
+      
+      if (res.ok) {
+        fetchSocialLinks();
+        setEditingSocial(null);
+        setNewSocial({ name: '', url: '', icon: 'Link', display_order: 0 });
+        toast({ title: 'Ссылка сохранена' });
+      }
+    } catch (error) {
+      toast({ title: 'Ошибка сохранения', variant: 'destructive' });
+    }
+  };
+
+  const handleDeleteSocial = async (id: number) => {
+    if (!token) return;
+    
+    try {
+      const res = await fetch(SOCIAL_URL, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Auth-Token': token
+        },
+        body: JSON.stringify({ id })
+      });
+      
+      if (res.ok) {
+        fetchSocialLinks();
+        toast({ title: 'Ссылка удалена' });
       }
     } catch (error) {
       toast({ title: 'Ошибка удаления', variant: 'destructive' });
@@ -243,6 +312,27 @@ const Index = () => {
                       <span className="text-[#b4ff00] text-xs">{item.date}</span>
                     </div>
                   </Card>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
+              <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
+                Наши соцсети
+              </h3>
+              
+              <div className="flex gap-4 justify-center flex-wrap">
+                {socialLinks.map((link) => (
+                  <a
+                    key={link.id}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="bg-[#3a3a3a]/90 hover:bg-[#4a4a4a] border-2 border-[#b4ff00]/20 hover:border-[#b4ff00] p-4 rounded-lg transition-all flex items-center gap-3"
+                  >
+                    <Icon name={link.icon} className="text-[#b4ff00]" size={24} />
+                    <span className="text-white font-semibold">{link.name}</span>
+                  </a>
                 ))}
               </div>
             </div>
@@ -385,6 +475,75 @@ const Index = () => {
                   </div>
                 </div>
               ))}
+            </div>
+
+            <div className="border-t border-[#b4ff00]/30 pt-6 mt-6">
+              <h3 className="text-[#b4ff00] font-bold mb-4">Управление соцсетями</h3>
+              
+              <div className="space-y-3 mb-4">
+                <h4 className="text-white text-sm">Добавить соцсеть</h4>
+                <Input
+                  placeholder="Название (например: Telegram)"
+                  value={newSocial.name}
+                  onChange={(e) => setNewSocial({ ...newSocial, name: e.target.value })}
+                  className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                />
+                <Input
+                  placeholder="Ссылка (например: https://t.me/username)"
+                  value={newSocial.url}
+                  onChange={(e) => setNewSocial({ ...newSocial, url: e.target.value })}
+                  className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                />
+                <Input
+                  placeholder="Иконка (MessageCircle, Youtube, Instagram)"
+                  value={newSocial.icon}
+                  onChange={(e) => setNewSocial({ ...newSocial, icon: e.target.value })}
+                  className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                />
+                <Button onClick={handleSaveSocial} className="bg-[#b4ff00] hover:bg-[#9de000] text-black">
+                  Добавить соцсеть
+                </Button>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-white text-sm">Текущие соцсети</h4>
+                {socialLinks.map((link) => (
+                  <div key={link.id} className="bg-[#3a3a3a] p-4 rounded space-y-2">
+                    <Input
+                      value={editingSocial?.id === link.id ? editingSocial.name : link.name}
+                      onChange={(e) => setEditingSocial({ ...link, name: e.target.value })}
+                      className="bg-[#4a4a4a] text-white border-[#b4ff00]/30"
+                      placeholder="Название"
+                    />
+                    <Input
+                      value={editingSocial?.id === link.id ? editingSocial.url : link.url}
+                      onChange={(e) => setEditingSocial({ ...link, url: e.target.value })}
+                      className="bg-[#4a4a4a] text-white border-[#b4ff00]/30"
+                      placeholder="Ссылка"
+                    />
+                    <Input
+                      value={editingSocial?.id === link.id ? editingSocial.icon : link.icon}
+                      onChange={(e) => setEditingSocial({ ...link, icon: e.target.value })}
+                      className="bg-[#4a4a4a] text-white border-[#b4ff00]/30"
+                      placeholder="Иконка"
+                    />
+                    <div className="flex gap-2">
+                      {editingSocial?.id === link.id ? (
+                        <Button onClick={handleSaveSocial} size="sm" className="bg-[#b4ff00] text-black">
+                          Сохранить
+                        </Button>
+                      ) : (
+                        <Button onClick={() => setEditingSocial(link)} size="sm" className="bg-[#b4ff00] text-black">
+                          Редактировать
+                        </Button>
+                      )}
+                      <Button onClick={() => handleDeleteSocial(link.id)} size="sm" variant="destructive">
+                        Удалить
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </DialogContent>
