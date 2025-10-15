@@ -372,6 +372,14 @@ const Index = () => {
                 ))}
               </div>
             </div>
+
+            <div className="text-center py-6">
+              <div className="inline-block bg-[#3a3a3a]/60 px-6 py-3 rounded-lg border border-[#b4ff00]/30">
+                <p className="text-white/80 text-sm">
+                  <span className="text-[#b4ff00] font-semibold">Создатель проекта:</span> Алан Габуния
+                </p>
+              </div>
+            </div>
           </div>
         </main>
       </div>
