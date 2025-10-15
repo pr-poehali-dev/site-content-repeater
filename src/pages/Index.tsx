@@ -79,6 +79,59 @@ const Index = () => {
 
             <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
               <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
+                Новости сервера
+              </h3>
+              
+              <div className="grid md:grid-cols-3 gap-6">
+                <Card className="bg-[#3a3a3a]/60 border-2 border-[#b4ff00]/20 hover:border-[#b4ff00] transition-all p-6">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="w-16 h-16 bg-[#b4ff00] rounded-full flex items-center justify-center">
+                      <span className="text-4xl">❓</span>
+                    </div>
+                  </div>
+                  <h4 className="text-lg font-bold text-white text-center mb-3">Обновление 1.5</h4>
+                  <p className="text-white/70 text-sm text-center">
+                    Добавлены новые квесты и улучшена система крафта
+                  </p>
+                  <div className="text-center mt-4">
+                    <span className="text-[#b4ff00] text-xs">15 октября 2025</span>
+                  </div>
+                </Card>
+
+                <Card className="bg-[#3a3a3a]/60 border-2 border-[#b4ff00]/20 hover:border-[#b4ff00] transition-all p-6">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="w-16 h-16 bg-[#b4ff00] rounded-full flex items-center justify-center">
+                      <span className="text-4xl">❓</span>
+                    </div>
+                  </div>
+                  <h4 className="text-lg font-bold text-white text-center mb-3">Новый ивент</h4>
+                  <p className="text-white/70 text-sm text-center">
+                    Хэллоуин ивент стартует на следующей неделе!
+                  </p>
+                  <div className="text-center mt-4">
+                    <span className="text-[#b4ff00] text-xs">10 октября 2025</span>
+                  </div>
+                </Card>
+
+                <Card className="bg-[#3a3a3a]/60 border-2 border-[#b4ff00]/20 hover:border-[#b4ff00] transition-all p-6">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="w-16 h-16 bg-[#b4ff00] rounded-full flex items-center justify-center">
+                      <span className="text-4xl">❓</span>
+                    </div>
+                  </div>
+                  <h4 className="text-lg font-bold text-white text-center mb-3">Набор в команду</h4>
+                  <p className="text-white/70 text-sm text-center">
+                    Ищем модераторов и помощников администрации
+                  </p>
+                  <div className="text-center mt-4">
+                    <span className="text-[#b4ff00] text-xs">5 октября 2025</span>
+                  </div>
+                </Card>
+              </div>
+            </div>
+
+            <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
+              <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
                 Что нужно для игры на проекте?
               </h3>
               
