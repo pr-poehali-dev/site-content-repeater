@@ -40,7 +40,9 @@ const Index = () => {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [editingSocial, setEditingSocial] = useState<SocialLink | null>(null);
   const [newSocial, setNewSocial] = useState({ name: '', url: '', icon: 'Link', display_order: 0 });
-  const [adminTab, setAdminTab] = useState<'news' | 'social'>('news');
+  const [adminTab, setAdminTab] = useState<'news' | 'social' | 'launcher'>('news');
+  const [launcherFile, setLauncherFile] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -354,6 +356,37 @@ const Index = () => {
             </div>
 
             <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
+              <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-6">
+                Наш лаунчер
+              </h3>
+              <div className="max-w-2xl mx-auto bg-[#3a3a3a]/60 p-6 rounded-lg border-2 border-[#b4ff00]/20">
+                <div className="flex items-start gap-4">
+                  <div className="bg-[#b4ff00] p-3 rounded">
+                    <Icon name="Download" className="text-black" size={32} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-xl font-bold text-white mb-2">DayZM Launcher</h4>
+                    <p className="text-white/70 mb-4">
+                      Используйте наш собственный лаунчер для удобного подключения к серверу. Пока доступен только для ПК.
+                    </p>
+                    {launcherFile ? (
+                      <a 
+                        href={launcherFile} 
+                        download
+                        className="inline-flex items-center gap-2 bg-[#b4ff00] hover:bg-[#9de000] text-black font-semibold px-6 py-3 rounded-lg transition-all"
+                      >
+                        <Icon name="Download" size={20} />
+                        Скачать лаунчер
+                      </a>
+                    ) : (
+                      <div className="text-white/50 text-sm">Скоро будет доступен для скачивания</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
               <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
                 Наши соцсети
               </h3>
@@ -438,7 +471,7 @@ const Index = () => {
             <DialogTitle className="text-white">Админ-панель</DialogTitle>
           </DialogHeader>
           
-          <div className="flex gap-2 border-b border-[#b4ff00]/30 pb-4">
+          <div className="flex gap-2 border-b border-[#b4ff00]/30 pb-4 flex-wrap">
             <Button 
               onClick={() => setAdminTab('news')}
               className={adminTab === 'news' ? 'bg-[#b4ff00] text-black' : 'bg-[#3a3a3a] text-white hover:bg-[#4a4a4a]'}
@@ -452,6 +485,13 @@ const Index = () => {
             >
               <Icon name="Share2" className="mr-2" size={18} />
               Соцсети
+            </Button>
+            <Button 
+              onClick={() => setAdminTab('launcher')}
+              className={adminTab === 'launcher' ? 'bg-[#b4ff00] text-black' : 'bg-[#3a3a3a] text-white hover:bg-[#4a4a4a]'}
+            >
+              <Icon name="Download" className="mr-2" size={18} />
+              Лаунчер
             </Button>
           </div>
 
@@ -588,6 +628,96 @@ const Index = () => {
                   </div>
                 ))}
               </div>
+              </>
+            )}
+
+            {adminTab === 'launcher' && (
+              <>
+                <div className="space-y-3">
+                  <h3 className="text-[#b4ff00] font-bold">Загрузить лаунчер</h3>
+                  <p className="text-white/70 text-sm">Максимальный размер файла: 5 ГБ</p>
+                  <div className="bg-[#3a3a3a] p-6 rounded-lg border-2 border-dashed border-[#b4ff00]/30 hover:border-[#b4ff00] transition-all">
+                    <input
+                      type="file"
+                      id="launcher-upload"
+                      className="hidden"
+                      accept=".exe,.zip,.rar,.7z"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        
+                        const maxSize = 5 * 1024 * 1024 * 1024;
+                        if (file.size > maxSize) {
+                          toast({ title: 'Файл слишком большой (макс. 5 ГБ)', variant: 'destructive' });
+                          return;
+                        }
+
+                        setUploading(true);
+                        const formData = new FormData();
+                        formData.append('file', file);
+
+                        try {
+                          const res = await fetch('https://cdn.poehali.dev/upload', {
+                            method: 'POST',
+                            body: formData
+                          });
+                          const data = await res.json();
+                          
+                          if (res.ok && data.url) {
+                            setLauncherFile(data.url);
+                            toast({ title: 'Лаунчер успешно загружен!' });
+                          } else {
+                            toast({ title: 'Ошибка загрузки', variant: 'destructive' });
+                          }
+                        } catch (error) {
+                          toast({ title: 'Ошибка загрузки файла', variant: 'destructive' });
+                        } finally {
+                          setUploading(false);
+                        }
+                      }}
+                    />
+                    <label htmlFor="launcher-upload" className="cursor-pointer flex flex-col items-center gap-3">
+                      <Icon name="Upload" className="text-[#b4ff00]" size={48} />
+                      <div className="text-center">
+                        <p className="text-white font-semibold mb-1">
+                          {uploading ? 'Загрузка...' : 'Нажмите для выбора файла'}
+                        </p>
+                        <p className="text-white/60 text-sm">
+                          Поддерживаются: .exe, .zip, .rar, .7z
+                        </p>
+                      </div>
+                    </label>
+                  </div>
+                  
+                  {launcherFile && (
+                    <div className="bg-[#3a3a3a] p-4 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <Icon name="CheckCircle" className="text-green-500" size={24} />
+                          <div>
+                            <p className="text-white font-semibold">Лаунчер загружен</p>
+                            <p className="text-white/60 text-sm">Пользователи могут скачать файл</p>
+                          </div>
+                        </div>
+                        <Button 
+                          onClick={() => setLauncherFile(null)} 
+                          size="sm" 
+                          variant="destructive"
+                        >
+                          Удалить
+                        </Button>
+                      </div>
+                      <a 
+                        href={launcherFile} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-[#b4ff00] text-sm hover:underline mt-2 block"
+                      >
+                        {launcherFile}
+                      </a>
+                    </div>
+                  )}
+                </div>
               </>
             )}
           </div>
