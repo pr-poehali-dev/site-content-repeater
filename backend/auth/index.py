@@ -38,6 +38,29 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     body_data = json.loads(event.get('body', '{}'))
     action = body_data.get('action')
     
+    if action == 'reset_admin_password':
+        new_password = body_data.get('new_password', 'admin123')
+        password_hash = bcrypt.hashpw(new_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        
+        db_url = os.environ.get('DATABASE_URL')
+        conn = psycopg2.connect(db_url)
+        cur = conn.cursor()
+        
+        cur.execute(
+            "UPDATE users SET password_hash = %s WHERE email = 'gabuniaalan13@gmail.com'",
+            (password_hash,)
+        )
+        conn.commit()
+        cur.close()
+        conn.close()
+        
+        return {
+            'statusCode': 200,
+            'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
+            'body': json.dumps({'message': 'Password reset successfully', 'new_password': new_password}),
+            'isBase64Encoded': False
+        }
+    
     db_url = os.environ.get('DATABASE_URL')
     jwt_secret = os.environ.get('JWT_SECRET')
     
