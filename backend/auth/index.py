@@ -164,13 +164,13 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         
         try:
             password_valid = bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8'))
-        except (ValueError, AttributeError):
+        except (ValueError, AttributeError) as e:
             cur.close()
             conn.close()
             return {
                 'statusCode': 401,
                 'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
-                'body': json.dumps({'error': 'Invalid password format'}),
+                'body': json.dumps({'error': 'Invalid password format', 'debug': str(e), 'hash_preview': user[2][:20]}),
                 'isBase64Encoded': False
             }
         
