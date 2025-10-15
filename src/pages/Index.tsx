@@ -21,6 +21,14 @@ interface SocialLink {
   display_order: number;
 }
 
+interface PartnershipText {
+  title: string;
+  description: string;
+  benefits: string[];
+  requirements: string[];
+  contact_text: string;
+}
+
 const AUTH_URL = 'https://functions.poehali.dev/57939455-bc01-4c35-80f2-ae3c5ae8c00b';
 const NEWS_URL = 'https://functions.poehali.dev/338ace17-3dab-4601-bb7b-627b4fda416d';
 const SOCIAL_URL = 'https://functions.poehali.dev/305f29bd-7d8d-4a52-83f6-164143e43a4a';
@@ -40,9 +48,26 @@ const Index = () => {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [editingSocial, setEditingSocial] = useState<SocialLink | null>(null);
   const [newSocial, setNewSocial] = useState({ name: '', url: '', icon: 'Link', display_order: 0 });
-  const [adminTab, setAdminTab] = useState<'news' | 'social' | 'launcher'>('news');
+  const [adminTab, setAdminTab] = useState<'news' | 'social' | 'launcher' | 'partnership'>('news');
   const [launcherFile, setLauncherFile] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [partnershipText, setPartnershipText] = useState<PartnershipText>({
+    title: 'Стань партнёром проекта!',
+    description: 'Мы приглашаем к сотрудничеству контент-мейкеров с YouTube, VK Видео и других платформ. Создавай контент о нашем сервере и получай уникальные преимущества!',
+    benefits: [
+      'Эксклюзивный контент для видео',
+      'Особый статус на сервере',
+      'Промокоды для твоей аудитории',
+      'Поддержка от администрации'
+    ],
+    requirements: [
+      'Активный канал/аккаунт',
+      'Качественный контент',
+      'Регулярные видео о сервере',
+      'Позитивное отношение к проекту'
+    ],
+    contact_text: 'Заинтересовало предложение? Свяжись с администрацией в наших соцсетях!'
+  });
   const { toast } = useToast();
 
   useEffect(() => {
@@ -397,10 +422,9 @@ const Index = () => {
                       <Icon name="Users" className="text-black" size={32} />
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-2xl font-bold text-white mb-3">Стань партнёром проекта!</h4>
+                      <h4 className="text-2xl font-bold text-white mb-3">{partnershipText.title}</h4>
                       <p className="text-white/80 mb-4">
-                        Мы приглашаем к сотрудничеству контент-мейкеров с YouTube, VK Видео и других платформ. 
-                        Создавай контент о нашем сервере и получай уникальные преимущества!
+                        {partnershipText.description}
                       </p>
                     </div>
                   </div>
@@ -412,10 +436,9 @@ const Index = () => {
                         <h5 className="text-white font-semibold">Что мы предлагаем:</h5>
                       </div>
                       <ul className="text-white/70 text-sm space-y-1">
-                        <li>• Эксклюзивный контент для видео</li>
-                        <li>• Особый статус на сервере</li>
-                        <li>• Промокоды для твоей аудитории</li>
-                        <li>• Поддержка от администрации</li>
+                        {partnershipText.benefits.map((benefit, index) => (
+                          <li key={index}>• {benefit}</li>
+                        ))}
                       </ul>
                     </div>
                     
@@ -425,17 +448,16 @@ const Index = () => {
                         <h5 className="text-white font-semibold">Требования:</h5>
                       </div>
                       <ul className="text-white/70 text-sm space-y-1">
-                        <li>• Активный канал/аккаунт</li>
-                        <li>• Качественный контент</li>
-                        <li>• Регулярные видео о сервере</li>
-                        <li>• Позитивное отношение к проекту</li>
+                        {partnershipText.requirements.map((req, index) => (
+                          <li key={index}>• {req}</li>
+                        ))}
                       </ul>
                     </div>
                   </div>
                   
                   <div className="text-center">
                     <p className="text-white/60 text-sm mb-3">
-                      Заинтересовало предложение? Свяжись с администрацией в наших соцсетях!
+                      {partnershipText.contact_text}
                     </p>
                     <Button className="bg-[#b4ff00] hover:bg-[#9de000] text-black font-semibold px-8 py-6 text-lg">
                       <Icon name="MessageCircle" className="mr-2" size={20} />
@@ -552,6 +574,13 @@ const Index = () => {
             >
               <Icon name="Download" className="mr-2" size={18} />
               Лаунчер
+            </Button>
+            <Button 
+              onClick={() => setAdminTab('partnership')}
+              className={adminTab === 'partnership' ? 'bg-[#b4ff00] text-black' : 'bg-[#3a3a3a] text-white hover:bg-[#4a4a4a]'}
+            >
+              <Icon name="Users" className="mr-2" size={18} />
+              Партнёрство
             </Button>
           </div>
 
@@ -777,6 +806,78 @@ const Index = () => {
                       </a>
                     </div>
                   )}
+                </div>
+              </>
+            )}
+
+            {adminTab === 'partnership' && (
+              <>
+                <div className="space-y-4">
+                  <h3 className="text-[#b4ff00] font-bold">Редактировать партнёрскую программу</h3>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-white/80 text-sm mb-1 block">Заголовок</label>
+                      <Input
+                        placeholder="Заголовок"
+                        value={partnershipText.title}
+                        onChange={(e) => setPartnershipText({ ...partnershipText, title: e.target.value })}
+                        className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-white/80 text-sm mb-1 block">Описание</label>
+                      <textarea
+                        placeholder="Описание программы"
+                        value={partnershipText.description}
+                        onChange={(e) => setPartnershipText({ ...partnershipText, description: e.target.value })}
+                        className="w-full bg-[#3a3a3a] text-white border border-[#b4ff00]/30 rounded-md p-3 min-h-[100px]"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-white/80 text-sm mb-1 block">Преимущества (по одному на строку)</label>
+                      <textarea
+                        placeholder="Каждое преимущество с новой строки"
+                        value={partnershipText.benefits.join('\n')}
+                        onChange={(e) => setPartnershipText({ 
+                          ...partnershipText, 
+                          benefits: e.target.value.split('\n').filter(b => b.trim()) 
+                        })}
+                        className="w-full bg-[#3a3a3a] text-white border border-[#b4ff00]/30 rounded-md p-3 min-h-[100px]"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-white/80 text-sm mb-1 block">Требования (по одному на строку)</label>
+                      <textarea
+                        placeholder="Каждое требование с новой строки"
+                        value={partnershipText.requirements.join('\n')}
+                        onChange={(e) => setPartnershipText({ 
+                          ...partnershipText, 
+                          requirements: e.target.value.split('\n').filter(r => r.trim()) 
+                        })}
+                        className="w-full bg-[#3a3a3a] text-white border border-[#b4ff00]/30 rounded-md p-3 min-h-[100px]"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-white/80 text-sm mb-1 block">Текст для связи</label>
+                      <Input
+                        placeholder="Текст призыва к действию"
+                        value={partnershipText.contact_text}
+                        onChange={(e) => setPartnershipText({ ...partnershipText, contact_text: e.target.value })}
+                        className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                      />
+                    </div>
+                    
+                    <div className="bg-[#3a3a3a]/60 p-4 rounded-lg border border-[#b4ff00]/20">
+                      <p className="text-white/60 text-sm">
+                        💡 Изменения отображаются сразу на сайте. Обновите страницу, чтобы увидеть результат.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </>
             )}
