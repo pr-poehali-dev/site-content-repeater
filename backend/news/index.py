@@ -39,10 +39,10 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     cur = conn.cursor()
     
     if method == 'GET':
-        cur.execute("SELECT id, title, description, date FROM news ORDER BY id DESC")
+        cur.execute("SELECT id, title, description, date, image_url FROM news ORDER BY id DESC")
         rows = cur.fetchall()
         news_list = [
-            {'id': row[0], 'title': row[1], 'description': row[2], 'date': row[3]}
+            {'id': row[0], 'title': row[1], 'description': row[2], 'date': row[3], 'image_url': row[4]}
             for row in rows
         ]
         
@@ -74,15 +74,16 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         title = body_data.get('title')
         description = body_data.get('description')
         date = body_data.get('date')
+        image_url = body_data.get('image_url')
         
         cur.execute(
-            "INSERT INTO news (title, description, date) VALUES (%s, %s, %s) RETURNING id, title, description, date",
-            (title, description, date)
+            "INSERT INTO news (title, description, date, image_url) VALUES (%s, %s, %s, %s) RETURNING id, title, description, date, image_url",
+            (title, description, date, image_url)
         )
         row = cur.fetchone()
         conn.commit()
         
-        news_item = {'id': row[0], 'title': row[1], 'description': row[2], 'date': row[3]}
+        news_item = {'id': row[0], 'title': row[1], 'description': row[2], 'date': row[3], 'image_url': row[4]}
         
         cur.close()
         conn.close()
@@ -100,10 +101,11 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         title = body_data.get('title')
         description = body_data.get('description')
         date = body_data.get('date')
+        image_url = body_data.get('image_url')
         
         cur.execute(
-            "UPDATE news SET title = %s, description = %s, date = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s RETURNING id, title, description, date",
-            (title, description, date, news_id)
+            "UPDATE news SET title = %s, description = %s, date = %s, image_url = %s, updated_at = CURRENT_TIMESTAMP WHERE id = %s RETURNING id, title, description, date, image_url",
+            (title, description, date, image_url, news_id)
         )
         row = cur.fetchone()
         conn.commit()
@@ -118,7 +120,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 'isBase64Encoded': False
             }
         
-        news_item = {'id': row[0], 'title': row[1], 'description': row[2], 'date': row[3]}
+        news_item = {'id': row[0], 'title': row[1], 'description': row[2], 'date': row[3], 'image_url': row[4]}
         
         cur.close()
         conn.close()

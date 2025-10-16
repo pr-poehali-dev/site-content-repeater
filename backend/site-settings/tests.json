@@ -1,0 +1,11 @@
+{
+  "tests": [
+    {
+      "name": "Get site settings",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200,
+      "bodyMatcher": "partial"
+    }
+  ]
+}

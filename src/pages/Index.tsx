@@ -11,6 +11,7 @@ interface NewsItem {
   title: string;
   description: string;
   date: string;
+  image_url?: string;
 }
 
 interface SocialLink {
@@ -32,6 +33,7 @@ interface PartnershipText {
 const AUTH_URL = 'https://functions.poehali.dev/57939455-bc01-4c35-80f2-ae3c5ae8c00b';
 const NEWS_URL = 'https://functions.poehali.dev/338ace17-3dab-4601-bb7b-627b4fda416d';
 const SOCIAL_URL = 'https://functions.poehali.dev/305f29bd-7d8d-4a52-83f6-164143e43a4a';
+const SETTINGS_URL = 'https://functions.poehali.dev/b07d3580-0b77-4a87-9828-534a8da2ff5e';
 
 const Index = () => {
   const [copied, setCopied] = useState(false);
@@ -44,7 +46,8 @@ const Index = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [news, setNews] = useState<NewsItem[]>([]);
   const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
-  const [newNews, setNewNews] = useState({ title: '', description: '', date: '' });
+  const [newNews, setNewNews] = useState({ title: '', description: '', date: '', image_url: '' });
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [editingSocial, setEditingSocial] = useState<SocialLink | null>(null);
   const [newSocial, setNewSocial] = useState({ name: '', url: '', icon: 'Link', display_order: 0 });
@@ -108,6 +111,7 @@ const Index = () => {
   useEffect(() => {
     fetchNews();
     fetchSocialLinks();
+    loadSettings();
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
@@ -117,6 +121,47 @@ const Index = () => {
       }
     }
   }, [token]);
+
+  const loadSettings = async () => {
+    try {
+      const res = await fetch(SETTINGS_URL);
+      const data = await res.json();
+      
+      if (data.mainTexts) setMainTexts(data.mainTexts);
+      if (data.serverInfo) setServerInfo(data.serverInfo);
+      if (data.requirementsTexts) setRequirementsTexts(data.requirementsTexts);
+      if (data.partnershipText) setPartnershipText(data.partnershipText);
+      if (data.partnershipSectionTitle) setPartnershipSectionTitle(data.partnershipSectionTitle);
+      if (data.footerTexts) setFooterTexts(data.footerTexts);
+    } catch (error) {
+      console.log('Настройки ещё не сохранены');
+    }
+  };
+
+  const saveSettings = async () => {
+    if (!token) return;
+    
+    try {
+      await fetch(SETTINGS_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Auth-Token': token
+        },
+        body: JSON.stringify({
+          mainTexts,
+          serverInfo,
+          requirementsTexts,
+          partnershipText,
+          partnershipSectionTitle,
+          footerTexts
+        })
+      });
+      toast({ title: 'Настройки сохранены!' });
+    } catch (error) {
+      toast({ title: 'Ошибка сохранения', variant: 'destructive' });
+    }
+  };
 
   const fetchNews = async () => {
     try {
@@ -187,7 +232,7 @@ const Index = () => {
       if (res.ok) {
         fetchNews();
         setEditingNews(null);
-        setNewNews({ title: '', description: '', date: '' });
+        setNewNews({ title: '', description: '', date: '', image_url: '' });
         toast({ title: 'Новость сохранена' });
       }
     } catch (error) {
@@ -363,16 +408,28 @@ const Index = () => {
               
               <div className="grid md:grid-cols-3 gap-6">
                 {news.map((item) => (
-                  <Card key={item.id} className="bg-[#3a3a3a]/60 border-2 border-[#b4ff00]/20 hover:border-[#b4ff00] transition-all p-6">
-                    <div className="flex items-center justify-center mb-4">
-                      <div className="w-16 h-16 bg-[#b4ff00] rounded-full flex items-center justify-center">
-                        <span className="text-4xl">❓</span>
+                  <Card key={item.id} className="bg-[#3a3a3a]/60 border-2 border-[#b4ff00]/20 hover:border-[#b4ff00] transition-all overflow-hidden">
+                    {item.image_url ? (
+                      <div className="w-full h-48 overflow-hidden">
+                        <img 
+                          src={item.image_url} 
+                          alt={item.title} 
+                          className="w-full h-full object-cover"
+                        />
                       </div>
-                    </div>
-                    <h4 className="text-lg font-bold text-white text-center mb-3">{item.title}</h4>
-                    <p className="text-white/70 text-sm text-center">{item.description}</p>
-                    <div className="text-center mt-4">
-                      <span className="text-[#b4ff00] text-xs">{item.date}</span>
+                    ) : (
+                      <div className="flex items-center justify-center p-6">
+                        <div className="w-16 h-16 bg-[#b4ff00] rounded-full flex items-center justify-center">
+                          <Icon name="Newspaper" className="text-black" size={32} />
+                        </div>
+                      </div>
+                    )}
+                    <div className="p-6">
+                      <h4 className="text-lg font-bold text-white text-center mb-3">{item.title}</h4>
+                      <p className="text-white/70 text-sm text-center line-clamp-3">{item.description}</p>
+                      <div className="text-center mt-4">
+                        <span className="text-[#b4ff00] text-xs">{item.date}</span>
+                      </div>
                     </div>
                   </Card>
                 ))}
@@ -684,9 +741,14 @@ const Index = () => {
                     />
                   </div>
                   
+                  <Button onClick={saveSettings} className="w-full bg-[#b4ff00] hover:bg-[#9de000] text-black font-semibold">
+                    <Icon name="Save" className="mr-2" size={18} />
+                    Сохранить настройки
+                  </Button>
+                  
                   <div className="bg-[#3a3a3a]/60 p-4 rounded-lg border border-[#b4ff00]/20">
                     <p className="text-white/60 text-sm">
-                      💡 Изменения отображаются сразу на сайте
+                      💡 Настройки сохраняются в базу данных и будут доступны после перезагрузки страницы
                     </p>
                   </div>
                 </div>
@@ -762,9 +824,14 @@ const Index = () => {
                     />
                   </div>
                   
+                  <Button onClick={saveSettings} className="w-full bg-[#b4ff00] hover:bg-[#9de000] text-black font-semibold">
+                    <Icon name="Save" className="mr-2" size={18} />
+                    Сохранить настройки
+                  </Button>
+                  
                   <div className="bg-[#3a3a3a]/60 p-4 rounded-lg border border-[#b4ff00]/20">
                     <p className="text-white/60 text-sm">
-                      💡 Изменения отображаются сразу на сайте
+                      💡 Настройки сохраняются в базу данных и будут доступны после перезагрузки страницы
                     </p>
                   </div>
                 </div>
@@ -781,11 +848,11 @@ const Index = () => {
                 onChange={(e) => setNewNews({ ...newNews, title: e.target.value })}
                 className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
               />
-              <Input
-                placeholder="Описание"
+              <textarea
+                placeholder="Описание новости"
                 value={newNews.description}
                 onChange={(e) => setNewNews({ ...newNews, description: e.target.value })}
-                className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                className="w-full bg-[#3a3a3a] text-white border border-[#b4ff00]/30 rounded-md p-3 min-h-[80px]"
               />
               <Input
                 placeholder="Дата (например: 15 октября 2025)"
@@ -793,8 +860,55 @@ const Index = () => {
                 onChange={(e) => setNewNews({ ...newNews, date: e.target.value })}
                 className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
               />
-              <Button onClick={handleSaveNews} className="bg-[#b4ff00] hover:bg-[#9de000] text-black">
-                Добавить
+              
+              <div className="bg-[#3a3a3a] p-4 rounded-lg border-2 border-dashed border-[#b4ff00]/30">
+                <input
+                  type="file"
+                  id="news-image-upload"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    
+                    setUploadingImage(true);
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    
+                    try {
+                      const res = await fetch('https://cdn.poehali.dev/upload', {
+                        method: 'POST',
+                        body: formData
+                      });
+                      const data = await res.json();
+                      
+                      if (res.ok && data.url) {
+                        setNewNews({ ...newNews, image_url: data.url });
+                        toast({ title: 'Изображение загружено!' });
+                      } else {
+                        toast({ title: 'Ошибка загрузки', variant: 'destructive' });
+                      }
+                    } catch (error) {
+                      toast({ title: 'Ошибка загрузки изображения', variant: 'destructive' });
+                    } finally {
+                      setUploadingImage(false);
+                    }
+                  }}
+                />
+                <label htmlFor="news-image-upload" className="cursor-pointer flex flex-col items-center gap-2">
+                  <Icon name="Image" className="text-[#b4ff00]" size={32} />
+                  <p className="text-white text-sm">
+                    {uploadingImage ? 'Загрузка...' : 'Загрузить изображение'}
+                  </p>
+                  {newNews.image_url && (
+                    <img src={newNews.image_url} alt="Preview" className="w-24 h-24 object-cover rounded mt-2" />
+                  )}
+                </label>
+              </div>
+              
+              <Button onClick={handleSaveNews} className="bg-[#b4ff00] hover:bg-[#9de000] text-black w-full">
+                <Icon name="Plus" className="mr-2" size={18} />
+                Добавить новость
               </Button>
             </div>
 
@@ -802,34 +916,90 @@ const Index = () => {
               <h3 className="text-[#b4ff00] font-bold">Текущие новости</h3>
               {news.map((item) => (
                 <div key={item.id} className="bg-[#3a3a3a] p-4 rounded space-y-2">
+                  {item.image_url && (
+                    <img src={item.image_url} alt={item.title} className="w-full h-32 object-cover rounded" />
+                  )}
                   <Input
                     value={editingNews?.id === item.id ? editingNews.title : item.title}
                     onChange={(e) => setEditingNews({ ...item, title: e.target.value })}
                     className="bg-[#4a4a4a] text-white border-[#b4ff00]/30"
+                    placeholder="Заголовок"
                   />
-                  <Input
+                  <textarea
                     value={editingNews?.id === item.id ? editingNews.description : item.description}
                     onChange={(e) => setEditingNews({ ...item, description: e.target.value })}
-                    className="bg-[#4a4a4a] text-white border-[#b4ff00]/30"
+                    className="w-full bg-[#4a4a4a] text-white border border-[#b4ff00]/30 rounded-md p-3 min-h-[60px]"
+                    placeholder="Описание"
                   />
                   <Input
                     value={editingNews?.id === item.id ? editingNews.date : item.date}
                     onChange={(e) => setEditingNews({ ...item, date: e.target.value })}
                     className="bg-[#4a4a4a] text-white border-[#b4ff00]/30"
+                    placeholder="Дата"
                   />
+                  
+                  {editingNews?.id === item.id && (
+                    <div className="bg-[#4a4a4a] p-3 rounded border border-[#b4ff00]/20">
+                      <input
+                        type="file"
+                        id={`edit-image-${item.id}`}
+                        className="hidden"
+                        accept="image/*"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          
+                          setUploadingImage(true);
+                          const formData = new FormData();
+                          formData.append('file', file);
+                          
+                          try {
+                            const res = await fetch('https://cdn.poehali.dev/upload', {
+                              method: 'POST',
+                              body: formData
+                            });
+                            const data = await res.json();
+                            
+                            if (res.ok && data.url) {
+                              setEditingNews({ ...editingNews, image_url: data.url });
+                              toast({ title: 'Изображение обновлено!' });
+                            }
+                          } catch (error) {
+                            toast({ title: 'Ошибка загрузки', variant: 'destructive' });
+                          } finally {
+                            setUploadingImage(false);
+                          }
+                        }}
+                      />
+                      <label htmlFor={`edit-image-${item.id}`} className="cursor-pointer flex items-center gap-2 text-white text-sm">
+                        <Icon name="Image" className="text-[#b4ff00]" size={20} />
+                        {uploadingImage ? 'Загрузка...' : 'Изменить изображение'}
+                      </label>
+                    </div>
+                  )}
+                  
                   <div className="flex gap-2">
                     {editingNews?.id === item.id ? (
-                      <Button onClick={handleSaveNews} size="sm" className="bg-[#b4ff00] text-black">
-                        Сохранить
-                      </Button>
+                      <>
+                        <Button onClick={handleSaveNews} size="sm" className="bg-[#b4ff00] text-black flex-1">
+                          <Icon name="Save" className="mr-2" size={16} />
+                          Сохранить
+                        </Button>
+                        <Button onClick={() => setEditingNews(null)} size="sm" variant="outline" className="border-white text-white">
+                          Отмена
+                        </Button>
+                      </>
                     ) : (
-                      <Button onClick={() => setEditingNews(item)} size="sm" className="bg-[#b4ff00] text-black">
-                        Редактировать
-                      </Button>
+                      <>
+                        <Button onClick={() => setEditingNews(item)} size="sm" className="bg-[#b4ff00] text-black flex-1">
+                          <Icon name="Edit" className="mr-2" size={16} />
+                          Редактировать
+                        </Button>
+                        <Button onClick={() => handleDeleteNews(item.id)} size="sm" variant="destructive">
+                          <Icon name="Trash2" size={16} />
+                        </Button>
+                      </>
                     )}
-                    <Button onClick={() => handleDeleteNews(item.id)} size="sm" variant="destructive">
-                      Удалить
-                    </Button>
                   </div>
                 </div>
               ))}
@@ -1095,9 +1265,14 @@ const Index = () => {
                       </div>
                     </div>
                     
+                    <Button onClick={saveSettings} className="w-full bg-[#b4ff00] hover:bg-[#9de000] text-black font-semibold">
+                      <Icon name="Save" className="mr-2" size={18} />
+                      Сохранить настройки
+                    </Button>
+                    
                     <div className="bg-[#3a3a3a]/60 p-4 rounded-lg border border-[#b4ff00]/20">
                       <p className="text-white/60 text-sm">
-                        💡 Изменения отображаются сразу на сайте
+                        💡 Настройки сохраняются в базу данных и будут доступны после перезагрузки страницы
                       </p>
                     </div>
                   </div>
@@ -1176,9 +1351,14 @@ const Index = () => {
                       />
                     </div>
                     
+                    <Button onClick={saveSettings} className="w-full bg-[#b4ff00] hover:bg-[#9de000] text-black font-semibold">
+                      <Icon name="Save" className="mr-2" size={18} />
+                      Сохранить настройки
+                    </Button>
+                    
                     <div className="bg-[#3a3a3a]/60 p-4 rounded-lg border border-[#b4ff00]/20">
                       <p className="text-white/60 text-sm">
-                        💡 Изменения отображаются сразу на сайте
+                        💡 Настройки сохраняются в базу данных и будут доступны после перезагрузки страницы
                       </p>
                     </div>
                   </div>
@@ -1241,9 +1421,14 @@ const Index = () => {
                       </div>
                     </div>
                     
+                    <Button onClick={saveSettings} className="w-full bg-[#b4ff00] hover:bg-[#9de000] text-black font-semibold">
+                      <Icon name="Save" className="mr-2" size={18} />
+                      Сохранить настройки
+                    </Button>
+                    
                     <div className="bg-[#3a3a3a]/60 p-4 rounded-lg border border-[#b4ff00]/20">
                       <p className="text-white/60 text-sm">
-                        💡 Изменения отображаются сразу на сайте
+                        💡 Настройки сохраняются в базу данных и будут доступны после перезагрузки страницы
                       </p>
                     </div>
                   </div>
