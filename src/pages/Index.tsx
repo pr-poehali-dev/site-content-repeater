@@ -48,7 +48,7 @@ const Index = () => {
   const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [editingSocial, setEditingSocial] = useState<SocialLink | null>(null);
   const [newSocial, setNewSocial] = useState({ name: '', url: '', icon: 'Link', display_order: 0 });
-  const [adminTab, setAdminTab] = useState<'news' | 'social' | 'launcher' | 'partnership'>('news');
+  const [adminTab, setAdminTab] = useState<'news' | 'social' | 'launcher' | 'partnership' | 'main' | 'server' | 'requirements' | 'footer'>('news');
   const [launcherFile, setLauncherFile] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [partnershipText, setPartnershipText] = useState<PartnershipText>({
@@ -67,6 +67,41 @@ const Index = () => {
       'Позитивное отношение к проекту'
     ],
     contact_text: 'Заинтересовало предложение? Свяжись с администрацией в наших соцсетях!'
+  });
+  const [partnershipSectionTitle, setPartnershipSectionTitle] = useState('Партнёрская программа');
+  const [mainTexts, setMainTexts] = useState({
+    siteName: 'DayZM',
+    serverIP: 'dayzm.my-craft.cc.',
+    copyButtonText: 'Скопировать IP',
+    copiedText: 'Скопировано!'
+  });
+  const [serverInfo, setServerInfo] = useState({
+    onlinePlayers: '0',
+    maxPlayers: '100',
+    playersTitle: 'Игроки онлайн',
+    version: '1.12.2',
+    versionSubtitle: 'Java Edition',
+    versionTitle: 'Версия',
+    newsTitle: 'Новости сервера'
+  });
+  const [requirementsTexts, setRequirementsTexts] = useState({
+    title: 'Что нужно для игры на проекте?',
+    pcTitle: 'Любой лаунчер',
+    pcDescription: 'Используйте TLauncher, Minecraft Launcher или любой другой на выбор',
+    mobileTitle: 'Играй с телефона',
+    mobileDescription: 'Поддерживаются Java лаунчеры для телефона: PojavLauncher и другие',
+    launcherSectionTitle: 'Наш лаунчер',
+    launcherTitle: 'DayZM Launcher',
+    launcherDescription: 'Используйте наш собственный лаунчер для удобного подключения к серверу. Пока доступен только для ПК.',
+    launcherButtonText: 'Скачать лаунчер',
+    launcherComingSoon: 'Скоро будет доступен для скачивания'
+  });
+  const [footerTexts, setFooterTexts] = useState({
+    socialTitle: 'Наши соцсети',
+    creatorLabel: 'Создатель проекта:',
+    creatorName: 'Алан Габуния',
+    disclaimer1: 'Администрация проекта не несет ответственности за действия игроков на сервере. Вся информация предоставляется "как есть". Играя на сервере, вы соглашаетесь с правилами проекта и принимаете на себя всю ответственность за свои действия.',
+    disclaimer2: 'Проект является некоммерческим фанатским сервером и не связан с правообладателями DayZ или Minecraft. Все права на торговые марки принадлежат их владельцам. Проект не преследует коммерческих целей и создан исключительно для развлечения игроков. Администрация не несет ответственности за возможные претензии третьих лиц.'
   });
   const { toast } = useToast();
 
@@ -104,7 +139,7 @@ const Index = () => {
   };
 
   const copyIP = () => {
-    navigator.clipboard.writeText('dayzm.my-craft.cc');
+    navigator.clipboard.writeText(mainTexts.serverIP);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -247,7 +282,7 @@ const Index = () => {
       <div className="relative z-10">
         <header className="bg-[#4a4a4a]/80 backdrop-blur-sm py-6 border-b border-white/10">
           <div className="container mx-auto px-4 flex items-center justify-between">
-            <h1 className="text-5xl font-black text-white tracking-wider">DayZM</h1>
+            <h1 className="text-5xl font-black text-white tracking-wider">{mainTexts.siteName}</h1>
             {!token ? (
               <Button onClick={() => setShowAuth(true)} className="bg-[#b4ff00] hover:bg-[#9de000] text-black">
                 Войти
@@ -271,7 +306,7 @@ const Index = () => {
           <div className="max-w-4xl mx-auto space-y-8">
             <div className="text-center">
               <div className="inline-block bg-[#b4ff00] px-8 py-4 mb-6">
-                <h2 className="text-2xl font-bold text-black">IP: dayzm.my-craft.cc.</h2>
+                <h2 className="text-2xl font-bold text-black">IP: {mainTexts.serverIP}</h2>
               </div>
 
               <div className="flex gap-4 justify-center">
@@ -280,7 +315,7 @@ const Index = () => {
                   className="bg-[#c86400] hover:bg-[#a55300] text-white font-semibold px-6 py-6 text-lg"
                 >
                   <Icon name="Copy" className="mr-2" size={20} />
-                  {copied ? 'Скопировано!' : 'Скопировать IP'}
+                  {copied ? mainTexts.copiedText : mainTexts.copyButtonText}
                 </Button>
               </div>
 
@@ -301,29 +336,29 @@ const Index = () => {
               <Card className="bg-[#3a3a3a]/90 border-0 p-6">
                 <div className="flex items-center gap-3 mb-3">
                   <Icon name="Users" className="text-[#b4ff00]" size={28} />
-                  <h3 className="text-xl font-bold text-[#b4ff00]">Игроки онлайн</h3>
+                  <h3 className="text-xl font-bold text-[#b4ff00]">{serverInfo.playersTitle}</h3>
                 </div>
                 <div className="text-center">
-                  <div className="text-6xl font-black text-white mb-2">0</div>
-                  <div className="text-white/60">из 100</div>
+                  <div className="text-6xl font-black text-white mb-2">{serverInfo.onlinePlayers}</div>
+                  <div className="text-white/60">из {serverInfo.maxPlayers}</div>
                 </div>
               </Card>
 
               <Card className="bg-[#3a3a3a]/90 border-0 p-6">
                 <div className="flex items-center gap-3 mb-3">
                   <Icon name="Globe" className="text-[#b4ff00]" size={28} />
-                  <h3 className="text-xl font-bold text-[#b4ff00]">Версия</h3>
+                  <h3 className="text-xl font-bold text-[#b4ff00]">{serverInfo.versionTitle}</h3>
                 </div>
                 <div className="text-center">
-                  <div className="text-5xl font-black text-white mb-2">1.12.2</div>
-                  <div className="text-white/60">Java Edition</div>
+                  <div className="text-5xl font-black text-white mb-2">{serverInfo.version}</div>
+                  <div className="text-white/60">{serverInfo.versionSubtitle}</div>
                 </div>
               </Card>
             </div>
 
             <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
               <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
-                Новости сервера
+                {serverInfo.newsTitle}
               </h3>
               
               <div className="grid md:grid-cols-3 gap-6">
@@ -346,7 +381,7 @@ const Index = () => {
 
             <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
               <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
-                Что нужно для игры на проекте?
+                {requirementsTexts.title}
               </h3>
               
               <div className="grid md:grid-cols-2 gap-6">
@@ -356,9 +391,9 @@ const Index = () => {
                       <Icon name="Laptop" className="text-black" size={32} />
                     </div>
                     <div>
-                      <h4 className="text-xl font-bold text-white mb-2">Любой лаунчер</h4>
+                      <h4 className="text-xl font-bold text-white mb-2">{requirementsTexts.pcTitle}</h4>
                       <p className="text-white/70">
-                        Используйте TLauncher, Minecraft Launcher или любой другой на выбор
+                        {requirementsTexts.pcDescription}
                       </p>
                     </div>
                   </div>
@@ -370,9 +405,9 @@ const Index = () => {
                       <Icon name="Smartphone" className="text-black" size={32} />
                     </div>
                     <div>
-                      <h4 className="text-xl font-bold text-white mb-2">Играй с телефона</h4>
+                      <h4 className="text-xl font-bold text-white mb-2">{requirementsTexts.mobileTitle}</h4>
                       <p className="text-white/70">
-                        Поддерживаются Java лаунчеры для телефона: PojavLauncher и другие
+                        {requirementsTexts.mobileDescription}
                       </p>
                     </div>
                   </div>
@@ -382,7 +417,7 @@ const Index = () => {
 
             <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
               <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-6">
-                Наш лаунчер
+                {requirementsTexts.launcherSectionTitle}
               </h3>
               <div className="max-w-2xl mx-auto bg-[#3a3a3a]/60 p-6 rounded-lg border-2 border-[#b4ff00]/20">
                 <div className="flex items-start gap-4">
@@ -390,9 +425,9 @@ const Index = () => {
                     <Icon name="Download" className="text-black" size={32} />
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-xl font-bold text-white mb-2">DayZM Launcher</h4>
+                    <h4 className="text-xl font-bold text-white mb-2">{requirementsTexts.launcherTitle}</h4>
                     <p className="text-white/70 mb-4">
-                      Используйте наш собственный лаунчер для удобного подключения к серверу. Пока доступен только для ПК.
+                      {requirementsTexts.launcherDescription}
                     </p>
                     {launcherFile ? (
                       <a 
@@ -401,10 +436,10 @@ const Index = () => {
                         className="inline-flex items-center gap-2 bg-[#b4ff00] hover:bg-[#9de000] text-black font-semibold px-6 py-3 rounded-lg transition-all"
                       >
                         <Icon name="Download" size={20} />
-                        Скачать лаунчер
+                        {requirementsTexts.launcherButtonText}
                       </a>
                     ) : (
-                      <div className="text-white/50 text-sm">Скоро будет доступен для скачивания</div>
+                      <div className="text-white/50 text-sm">{requirementsTexts.launcherComingSoon}</div>
                     )}
                   </div>
                 </div>
@@ -413,7 +448,7 @@ const Index = () => {
 
             <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
               <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-6">
-                Партнёрская программа
+                {partnershipSectionTitle}
               </h3>
               <div className="max-w-3xl mx-auto">
                 <div className="bg-gradient-to-r from-[#b4ff00]/10 to-[#c86400]/10 p-6 rounded-lg border-2 border-[#b4ff00]/30">
@@ -470,7 +505,7 @@ const Index = () => {
 
             <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
               <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
-                Наши соцсети
+                {footerTexts.socialTitle}
               </h3>
               
               <div className="flex gap-4 justify-center flex-wrap">
@@ -492,21 +527,16 @@ const Index = () => {
             <div className="text-center py-6 space-y-4">
               <div className="inline-block bg-[#3a3a3a]/60 px-6 py-3 rounded-lg border border-[#b4ff00]/30">
                 <p className="text-white/80 text-sm">
-                  <span className="text-[#b4ff00] font-semibold">Создатель проекта:</span> Алан Габуния
+                  <span className="text-[#b4ff00] font-semibold">{footerTexts.creatorLabel}</span> {footerTexts.creatorName}
                 </p>
               </div>
               
               <div className="max-w-2xl mx-auto bg-[#2a2a2a]/60 px-6 py-4 rounded-lg border border-white/10">
                 <p className="text-white/60 text-xs leading-relaxed">
-                  Администрация проекта не несет ответственности за действия игроков на сервере. 
-                  Вся информация предоставляется "как есть". Играя на сервере, вы соглашаетесь с правилами проекта 
-                  и принимаете на себя всю ответственность за свои действия.
+                  {footerTexts.disclaimer1}
                 </p>
                 <p className="text-white/60 text-xs leading-relaxed mt-3">
-                  Проект является некоммерческим фанатским сервером и не связан с правообладателями DayZ или Minecraft. 
-                  Все права на торговые марки принадлежат их владельцам. Проект не преследует коммерческих целей 
-                  и создан исключительно для развлечения игроков. Администрация не несет ответственности 
-                  за возможные претензии третьих лиц.
+                  {footerTexts.disclaimer2}
                 </p>
               </div>
             </div>
@@ -555,11 +585,39 @@ const Index = () => {
           
           <div className="flex gap-2 border-b border-[#b4ff00]/30 pb-4 flex-wrap">
             <Button 
+              onClick={() => setAdminTab('main')}
+              className={adminTab === 'main' ? 'bg-[#b4ff00] text-black' : 'bg-[#3a3a3a] text-white hover:bg-[#4a4a4a]'}
+            >
+              <Icon name="Home" className="mr-2" size={18} />
+              Главная
+            </Button>
+            <Button 
+              onClick={() => setAdminTab('server')}
+              className={adminTab === 'server' ? 'bg-[#b4ff00] text-black' : 'bg-[#3a3a3a] text-white hover:bg-[#4a4a4a]'}
+            >
+              <Icon name="Server" className="mr-2" size={18} />
+              Сервер
+            </Button>
+            <Button 
               onClick={() => setAdminTab('news')}
               className={adminTab === 'news' ? 'bg-[#b4ff00] text-black' : 'bg-[#3a3a3a] text-white hover:bg-[#4a4a4a]'}
             >
               <Icon name="Newspaper" className="mr-2" size={18} />
               Новости
+            </Button>
+            <Button 
+              onClick={() => setAdminTab('requirements')}
+              className={adminTab === 'requirements' ? 'bg-[#b4ff00] text-black' : 'bg-[#3a3a3a] text-white hover:bg-[#4a4a4a]'}
+            >
+              <Icon name="Laptop" className="mr-2" size={18} />
+              Требования
+            </Button>
+            <Button 
+              onClick={() => setAdminTab('partnership')}
+              className={adminTab === 'partnership' ? 'bg-[#b4ff00] text-black' : 'bg-[#3a3a3a] text-white hover:bg-[#4a4a4a]'}
+            >
+              <Icon name="Users" className="mr-2" size={18} />
+              Партнёрство
             </Button>
             <Button 
               onClick={() => setAdminTab('social')}
@@ -576,15 +634,143 @@ const Index = () => {
               Лаунчер
             </Button>
             <Button 
-              onClick={() => setAdminTab('partnership')}
-              className={adminTab === 'partnership' ? 'bg-[#b4ff00] text-black' : 'bg-[#3a3a3a] text-white hover:bg-[#4a4a4a]'}
+              onClick={() => setAdminTab('footer')}
+              className={adminTab === 'footer' ? 'bg-[#b4ff00] text-black' : 'bg-[#3a3a3a] text-white hover:bg-[#4a4a4a]'}
             >
-              <Icon name="Users" className="mr-2" size={18} />
-              Партнёрство
+              <Icon name="FileText" className="mr-2" size={18} />
+              Футер
             </Button>
           </div>
 
           <div className="space-y-6">
+            {adminTab === 'main' && (
+              <>
+                <div className="space-y-4">
+                  <h3 className="text-[#b4ff00] font-bold">Главные тексты сайта</h3>
+                  
+                  <div>
+                    <label className="text-white/80 text-sm mb-1 block">Название сайта</label>
+                    <Input
+                      value={mainTexts.siteName}
+                      onChange={(e) => setMainTexts({ ...mainTexts, siteName: e.target.value })}
+                      className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-white/80 text-sm mb-1 block">IP сервера</label>
+                    <Input
+                      value={mainTexts.serverIP}
+                      onChange={(e) => setMainTexts({ ...mainTexts, serverIP: e.target.value })}
+                      className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-white/80 text-sm mb-1 block">Текст кнопки копирования</label>
+                    <Input
+                      value={mainTexts.copyButtonText}
+                      onChange={(e) => setMainTexts({ ...mainTexts, copyButtonText: e.target.value })}
+                      className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-white/80 text-sm mb-1 block">Текст после копирования</label>
+                    <Input
+                      value={mainTexts.copiedText}
+                      onChange={(e) => setMainTexts({ ...mainTexts, copiedText: e.target.value })}
+                      className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                    />
+                  </div>
+                  
+                  <div className="bg-[#3a3a3a]/60 p-4 rounded-lg border border-[#b4ff00]/20">
+                    <p className="text-white/60 text-sm">
+                      💡 Изменения отображаются сразу на сайте
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {adminTab === 'server' && (
+              <>
+                <div className="space-y-4">
+                  <h3 className="text-[#b4ff00] font-bold">Информация о сервере</h3>
+                  
+                  <div>
+                    <label className="text-white/80 text-sm mb-1 block">Заголовок "Игроки онлайн"</label>
+                    <Input
+                      value={serverInfo.playersTitle}
+                      onChange={(e) => setServerInfo({ ...serverInfo, playersTitle: e.target.value })}
+                      className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-white/80 text-sm mb-1 block">Онлайн</label>
+                      <Input
+                        value={serverInfo.onlinePlayers}
+                        onChange={(e) => setServerInfo({ ...serverInfo, onlinePlayers: e.target.value })}
+                        className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                      />
+                    </div>
+                    <div>
+                      <label className="text-white/80 text-sm mb-1 block">Максимум</label>
+                      <Input
+                        value={serverInfo.maxPlayers}
+                        onChange={(e) => setServerInfo({ ...serverInfo, maxPlayers: e.target.value })}
+                        className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label className="text-white/80 text-sm mb-1 block">Заголовок "Версия"</label>
+                    <Input
+                      value={serverInfo.versionTitle}
+                      onChange={(e) => setServerInfo({ ...serverInfo, versionTitle: e.target.value })}
+                      className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-white/80 text-sm mb-1 block">Версия игры</label>
+                    <Input
+                      value={serverInfo.version}
+                      onChange={(e) => setServerInfo({ ...serverInfo, version: e.target.value })}
+                      className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-white/80 text-sm mb-1 block">Подзаголовок версии</label>
+                    <Input
+                      value={serverInfo.versionSubtitle}
+                      onChange={(e) => setServerInfo({ ...serverInfo, versionSubtitle: e.target.value })}
+                      className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-white/80 text-sm mb-1 block">Заголовок секции новостей</label>
+                    <Input
+                      value={serverInfo.newsTitle}
+                      onChange={(e) => setServerInfo({ ...serverInfo, newsTitle: e.target.value })}
+                      className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                    />
+                  </div>
+                  
+                  <div className="bg-[#3a3a3a]/60 p-4 rounded-lg border border-[#b4ff00]/20">
+                    <p className="text-white/60 text-sm">
+                      💡 Изменения отображаются сразу на сайте
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+
             {adminTab === 'news' && (
               <>
                 <div className="space-y-3">
@@ -810,6 +996,115 @@ const Index = () => {
               </>
             )}
 
+            {adminTab === 'requirements' && (
+              <>
+                <div className="space-y-4">
+                  <h3 className="text-[#b4ff00] font-bold">Требования для игры</h3>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-white/80 text-sm mb-1 block">Заголовок секции</label>
+                      <Input
+                        value={requirementsTexts.title}
+                        onChange={(e) => setRequirementsTexts({ ...requirementsTexts, title: e.target.value })}
+                        className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                      />
+                    </div>
+                    
+                    <div className="bg-[#2a2a2a] p-4 rounded-lg space-y-3">
+                      <h4 className="text-white font-semibold">Блок 1: ПК лаунчеры</h4>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Заголовок</label>
+                        <Input
+                          value={requirementsTexts.pcTitle}
+                          onChange={(e) => setRequirementsTexts({ ...requirementsTexts, pcTitle: e.target.value })}
+                          className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Описание</label>
+                        <textarea
+                          value={requirementsTexts.pcDescription}
+                          onChange={(e) => setRequirementsTexts({ ...requirementsTexts, pcDescription: e.target.value })}
+                          className="w-full bg-[#3a3a3a] text-white border border-[#b4ff00]/30 rounded-md p-3 min-h-[60px]"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="bg-[#2a2a2a] p-4 rounded-lg space-y-3">
+                      <h4 className="text-white font-semibold">Блок 2: Мобильные лаунчеры</h4>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Заголовок</label>
+                        <Input
+                          value={requirementsTexts.mobileTitle}
+                          onChange={(e) => setRequirementsTexts({ ...requirementsTexts, mobileTitle: e.target.value })}
+                          className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Описание</label>
+                        <textarea
+                          value={requirementsTexts.mobileDescription}
+                          onChange={(e) => setRequirementsTexts({ ...requirementsTexts, mobileDescription: e.target.value })}
+                          className="w-full bg-[#3a3a3a] text-white border border-[#b4ff00]/30 rounded-md p-3 min-h-[60px]"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="bg-[#2a2a2a] p-4 rounded-lg space-y-3">
+                      <h4 className="text-white font-semibold">Секция "Наш лаунчер"</h4>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Заголовок секции</label>
+                        <Input
+                          value={requirementsTexts.launcherSectionTitle}
+                          onChange={(e) => setRequirementsTexts({ ...requirementsTexts, launcherSectionTitle: e.target.value })}
+                          className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Название лаунчера</label>
+                        <Input
+                          value={requirementsTexts.launcherTitle}
+                          onChange={(e) => setRequirementsTexts({ ...requirementsTexts, launcherTitle: e.target.value })}
+                          className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Описание</label>
+                        <textarea
+                          value={requirementsTexts.launcherDescription}
+                          onChange={(e) => setRequirementsTexts({ ...requirementsTexts, launcherDescription: e.target.value })}
+                          className="w-full bg-[#3a3a3a] text-white border border-[#b4ff00]/30 rounded-md p-3 min-h-[80px]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Текст кнопки скачивания</label>
+                        <Input
+                          value={requirementsTexts.launcherButtonText}
+                          onChange={(e) => setRequirementsTexts({ ...requirementsTexts, launcherButtonText: e.target.value })}
+                          className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Текст "скоро будет"</label>
+                        <Input
+                          value={requirementsTexts.launcherComingSoon}
+                          onChange={(e) => setRequirementsTexts({ ...requirementsTexts, launcherComingSoon: e.target.value })}
+                          className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="bg-[#3a3a3a]/60 p-4 rounded-lg border border-[#b4ff00]/20">
+                      <p className="text-white/60 text-sm">
+                        💡 Изменения отображаются сразу на сайте
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
             {adminTab === 'partnership' && (
               <>
                 <div className="space-y-4">
@@ -817,7 +1112,16 @@ const Index = () => {
                   
                   <div className="space-y-3">
                     <div>
-                      <label className="text-white/80 text-sm mb-1 block">Заголовок</label>
+                      <label className="text-white/80 text-sm mb-1 block">Заголовок секции</label>
+                      <Input
+                        value={partnershipSectionTitle}
+                        onChange={(e) => setPartnershipSectionTitle(e.target.value)}
+                        className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="text-white/80 text-sm mb-1 block">Заголовок карточки</label>
                       <Input
                         placeholder="Заголовок"
                         value={partnershipText.title}
@@ -874,7 +1178,72 @@ const Index = () => {
                     
                     <div className="bg-[#3a3a3a]/60 p-4 rounded-lg border border-[#b4ff00]/20">
                       <p className="text-white/60 text-sm">
-                        💡 Изменения отображаются сразу на сайте. Обновите страницу, чтобы увидеть результат.
+                        💡 Изменения отображаются сразу на сайте
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {adminTab === 'footer' && (
+              <>
+                <div className="space-y-4">
+                  <h3 className="text-[#b4ff00] font-bold">Футер сайта</h3>
+                  
+                  <div className="space-y-3">
+                    <div>
+                      <label className="text-white/80 text-sm mb-1 block">Заголовок соцсетей</label>
+                      <Input
+                        value={footerTexts.socialTitle}
+                        onChange={(e) => setFooterTexts({ ...footerTexts, socialTitle: e.target.value })}
+                        className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                      />
+                    </div>
+                    
+                    <div className="bg-[#2a2a2a] p-4 rounded-lg space-y-3">
+                      <h4 className="text-white font-semibold">Информация о создателе</h4>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Метка "Создатель"</label>
+                        <Input
+                          value={footerTexts.creatorLabel}
+                          onChange={(e) => setFooterTexts({ ...footerTexts, creatorLabel: e.target.value })}
+                          className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Имя создателя</label>
+                        <Input
+                          value={footerTexts.creatorName}
+                          onChange={(e) => setFooterTexts({ ...footerTexts, creatorName: e.target.value })}
+                          className="bg-[#3a3a3a] text-white border-[#b4ff00]/30"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="bg-[#2a2a2a] p-4 rounded-lg space-y-3">
+                      <h4 className="text-white font-semibold">Дисклеймеры</h4>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Первый дисклеймер</label>
+                        <textarea
+                          value={footerTexts.disclaimer1}
+                          onChange={(e) => setFooterTexts({ ...footerTexts, disclaimer1: e.target.value })}
+                          className="w-full bg-[#3a3a3a] text-white border border-[#b4ff00]/30 rounded-md p-3 min-h-[100px]"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-white/80 text-sm mb-1 block">Второй дисклеймер</label>
+                        <textarea
+                          value={footerTexts.disclaimer2}
+                          onChange={(e) => setFooterTexts({ ...footerTexts, disclaimer2: e.target.value })}
+                          className="w-full bg-[#3a3a3a] text-white border border-[#b4ff00]/30 rounded-md p-3 min-h-[100px]"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="bg-[#3a3a3a]/60 p-4 rounded-lg border border-[#b4ff00]/20">
+                      <p className="text-white/60 text-sm">
+                        💡 Изменения отображаются сразу на сайте
                       </p>
                     </div>
                   </div>
