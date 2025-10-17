@@ -350,8 +350,8 @@ const Index = () => {
         <main className="container mx-auto px-4 py-16">
           <div className="max-w-4xl mx-auto space-y-8">
             <div className="text-center">
-              <div className="inline-block bg-[#b4ff00] px-8 py-4 mb-6">
-                <h2 className="text-2xl font-bold text-black">IP: {mainTexts.serverIP}</h2>
+              <div className="inline-block bg-[#b4ff00] px-4 md:px-8 py-3 md:py-4 mb-6">
+                <h2 className="text-lg md:text-2xl font-bold text-black break-words">IP: {mainTexts.serverIP}</h2>
               </div>
 
               <div className="flex gap-4 justify-center">
@@ -381,28 +381,28 @@ const Index = () => {
               <Card className="bg-[#3a3a3a]/90 border-0 p-6">
                 <div className="flex items-center gap-3 mb-3">
                   <Icon name="Users" className="text-[#b4ff00]" size={28} />
-                  <h3 className="text-xl font-bold text-[#b4ff00]">{serverInfo.playersTitle}</h3>
+                  <h3 className="text-base md:text-xl font-bold text-[#b4ff00] break-words">{serverInfo.playersTitle}</h3>
                 </div>
                 <div className="text-center">
-                  <div className="text-6xl font-black text-white mb-2">{serverInfo.onlinePlayers}</div>
-                  <div className="text-white/60">из {serverInfo.maxPlayers}</div>
+                  <div className="text-4xl md:text-6xl font-black text-white mb-2">{serverInfo.onlinePlayers}</div>
+                  <div className="text-sm md:text-base text-white/60">из {serverInfo.maxPlayers}</div>
                 </div>
               </Card>
 
               <Card className="bg-[#3a3a3a]/90 border-0 p-6">
                 <div className="flex items-center gap-3 mb-3">
                   <Icon name="Globe" className="text-[#b4ff00]" size={28} />
-                  <h3 className="text-xl font-bold text-[#b4ff00]">{serverInfo.versionTitle}</h3>
+                  <h3 className="text-base md:text-xl font-bold text-[#b4ff00] break-words">{serverInfo.versionTitle}</h3>
                 </div>
                 <div className="text-center">
-                  <div className="text-5xl font-black text-white mb-2">{serverInfo.version}</div>
-                  <div className="text-white/60">{serverInfo.versionSubtitle}</div>
+                  <div className="text-3xl md:text-5xl font-black text-white mb-2 break-words">{serverInfo.version}</div>
+                  <div className="text-sm md:text-base text-white/60 break-words whitespace-pre-wrap">{serverInfo.versionSubtitle}</div>
                 </div>
               </Card>
             </div>
 
-            <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
-              <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
+            <div className="bg-[#2a2a2a]/90 p-4 md:p-8 rounded-lg">
+              <h3 className="text-2xl md:text-3xl font-bold text-[#b4ff00] text-center mb-6 md:mb-8 break-words">
                 {serverInfo.newsTitle}
               </h3>
               
@@ -424,9 +424,9 @@ const Index = () => {
                         </div>
                       </div>
                     )}
-                    <div className="p-6">
-                      <h4 className="text-lg font-bold text-white text-center mb-3">{item.title}</h4>
-                      <p className="text-white/70 text-sm text-center line-clamp-3">{item.description}</p>
+                    <div className="p-4 md:p-6">
+                      <h4 className="text-base md:text-lg font-bold text-white text-center mb-2 md:mb-3 break-words">{item.title}</h4>
+                      <p className="text-white/70 text-xs md:text-sm text-center break-words whitespace-pre-wrap">{item.description}</p>
                       <div className="text-center mt-4">
                         <span className="text-[#b4ff00] text-xs">{item.date}</span>
                       </div>
@@ -436,8 +436,8 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
-              <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
+            <div className="bg-[#2a2a2a]/90 p-4 md:p-8 rounded-lg">
+              <h3 className="text-2xl md:text-3xl font-bold text-[#b4ff00] text-center mb-6 md:mb-8 break-words">
                 {requirementsTexts.title}
               </h3>
               
@@ -448,8 +448,8 @@ const Index = () => {
                       <Icon name="Laptop" className="text-black" size={32} />
                     </div>
                     <div>
-                      <h4 className="text-xl font-bold text-white mb-2">{requirementsTexts.pcTitle}</h4>
-                      <p className="text-white/70">
+                      <h4 className="text-lg md:text-xl font-bold text-white mb-2 break-words">{requirementsTexts.pcTitle}</h4>
+                      <p className="text-sm md:text-base text-white/70 break-words whitespace-pre-wrap">
                         {requirementsTexts.pcDescription}
                       </p>
                     </div>
@@ -462,8 +462,8 @@ const Index = () => {
                       <Icon name="Smartphone" className="text-black" size={32} />
                     </div>
                     <div>
-                      <h4 className="text-xl font-bold text-white mb-2">{requirementsTexts.mobileTitle}</h4>
-                      <p className="text-white/70">
+                      <h4 className="text-lg md:text-xl font-bold text-white mb-2 break-words">{requirementsTexts.mobileTitle}</h4>
+                      <p className="text-sm md:text-base text-white/70 break-words whitespace-pre-wrap">
                         {requirementsTexts.mobileDescription}
                       </p>
                     </div>
@@ -472,8 +472,8 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
-              <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-6">
+            <div className="bg-[#2a2a2a]/90 p-4 md:p-8 rounded-lg">
+              <h3 className="text-2xl md:text-3xl font-bold text-[#b4ff00] text-center mb-4 md:mb-6 break-words">
                 {requirementsTexts.launcherSectionTitle}
               </h3>
               <div className="max-w-2xl mx-auto bg-[#3a3a3a]/60 p-6 rounded-lg border-2 border-[#b4ff00]/20">
@@ -482,8 +482,8 @@ const Index = () => {
                     <Icon name="Download" className="text-black" size={32} />
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-xl font-bold text-white mb-2">{requirementsTexts.launcherTitle}</h4>
-                    <p className="text-white/70 mb-4">
+                    <h4 className="text-lg md:text-xl font-bold text-white mb-2 break-words">{requirementsTexts.launcherTitle}</h4>
+                    <p className="text-sm md:text-base text-white/70 mb-4 break-words whitespace-pre-wrap">
                       {requirementsTexts.launcherDescription}
                     </p>
                     {launcherFile ? (
@@ -503,8 +503,8 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
-              <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-6">
+            <div className="bg-[#2a2a2a]/90 p-4 md:p-8 rounded-lg">
+              <h3 className="text-2xl md:text-3xl font-bold text-[#b4ff00] text-center mb-4 md:mb-6 break-words">
                 {partnershipSectionTitle}
               </h3>
               <div className="max-w-3xl mx-auto">
@@ -514,8 +514,8 @@ const Index = () => {
                       <Icon name="Users" className="text-black" size={32} />
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-2xl font-bold text-white mb-3">{partnershipText.title}</h4>
-                      <p className="text-white/80 mb-4">
+                      <h4 className="text-xl md:text-2xl font-bold text-white mb-3 break-words">{partnershipText.title}</h4>
+                      <p className="text-sm md:text-base text-white/80 mb-4 break-words whitespace-pre-wrap">
                         {partnershipText.description}
                       </p>
                     </div>
@@ -529,7 +529,7 @@ const Index = () => {
                       </div>
                       <ul className="text-white/70 text-sm space-y-1">
                         {partnershipText.benefits.map((benefit, index) => (
-                          <li key={index}>• {benefit}</li>
+                          <li key={index} className="break-words whitespace-pre-wrap">• {benefit}</li>
                         ))}
                       </ul>
                     </div>
@@ -541,14 +541,14 @@ const Index = () => {
                       </div>
                       <ul className="text-white/70 text-sm space-y-1">
                         {partnershipText.requirements.map((req, index) => (
-                          <li key={index}>• {req}</li>
+                          <li key={index} className="break-words whitespace-pre-wrap">• {req}</li>
                         ))}
                       </ul>
                     </div>
                   </div>
                   
                   <div className="text-center">
-                    <p className="text-white/60 text-sm mb-3">
+                    <p className="text-white/60 text-sm mb-3 break-words whitespace-pre-wrap">
                       {partnershipText.contact_text}
                     </p>
                     <Button className="bg-[#b4ff00] hover:bg-[#9de000] text-black font-semibold px-8 py-6 text-lg">
@@ -560,8 +560,8 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="bg-[#2a2a2a]/90 p-8 rounded-lg">
-              <h3 className="text-3xl font-bold text-[#b4ff00] text-center mb-8">
+            <div className="bg-[#2a2a2a]/90 p-4 md:p-8 rounded-lg">
+              <h3 className="text-2xl md:text-3xl font-bold text-[#b4ff00] text-center mb-6 md:mb-8 break-words">
                 {footerTexts.socialTitle}
               </h3>
               
@@ -589,10 +589,10 @@ const Index = () => {
               </div>
               
               <div className="max-w-2xl mx-auto bg-[#2a2a2a]/60 px-6 py-4 rounded-lg border border-white/10">
-                <p className="text-white/60 text-xs leading-relaxed">
+                <p className="text-white/60 text-xs leading-relaxed break-words whitespace-pre-wrap">
                   {footerTexts.disclaimer1}
                 </p>
-                <p className="text-white/60 text-xs leading-relaxed mt-3">
+                <p className="text-white/60 text-xs leading-relaxed mt-3 break-words whitespace-pre-wrap">
                   {footerTexts.disclaimer2}
                 </p>
               </div>
