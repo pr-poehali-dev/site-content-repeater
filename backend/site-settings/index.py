@@ -18,6 +18,8 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     Returns: HTTP response with settings data
     '''
     method: str = event.get('httpMethod', 'GET')
+    print(f"Received request: {method}")
+    print(f"Headers: {event.get('headers', {})}")
     
     if method == 'OPTIONS':
         return {
