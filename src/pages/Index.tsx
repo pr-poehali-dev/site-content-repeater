@@ -142,7 +142,7 @@ const Index = () => {
     if (!token) return;
     
     try {
-      await fetch(SETTINGS_URL, {
+      const res = await fetch(SETTINGS_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -157,9 +157,16 @@ const Index = () => {
           footerTexts
         })
       });
+      
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || 'Ошибка сохранения');
+      }
+      
       toast({ title: 'Настройки сохранены!' });
     } catch (error) {
-      toast({ title: 'Ошибка сохранения', variant: 'destructive' });
+      console.error('Save settings error:', error);
+      toast({ title: error instanceof Error ? error.message : 'Ошибка сохранения', variant: 'destructive' });
     }
   };
 
