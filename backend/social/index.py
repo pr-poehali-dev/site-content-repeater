@@ -10,6 +10,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     Returns: HTTP response with social links or operation result
     '''
     method: str = event.get('httpMethod', 'GET')
+    print(f"Social request: {method}")
     
     if method == 'OPTIONS':
         return {

@@ -18,6 +18,7 @@ def handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     Returns: HTTP response with news data
     '''
     method: str = event.get('httpMethod', 'GET')
+    print(f"News request: {method}")
     
     if method == 'OPTIONS':
         return {
