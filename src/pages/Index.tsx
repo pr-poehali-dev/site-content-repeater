@@ -73,7 +73,7 @@ const Index = () => {
   });
   const [partnershipSectionTitle, setPartnershipSectionTitle] = useState('Партнёрская программа');
   const [mainTexts, setMainTexts] = useState({
-    siteName: 'DayZM',
+    siteName: 'DayS',
     serverIP: 'dayzm.my-craft.cc.',
     copyButtonText: 'Скопировать IP',
     copiedText: 'Скопировано!'
@@ -94,7 +94,7 @@ const Index = () => {
     mobileTitle: 'Играй с телефона',
     mobileDescription: 'Поддерживаются Java лаунчеры для телефона: PojavLauncher и другие',
     launcherSectionTitle: 'Наш лаунчер',
-    launcherTitle: 'DayZM Launcher',
+    launcherTitle: 'DayS Launcher',
     launcherDescription: 'Используйте наш собственный лаунчер для удобного подключения к серверу. Пока доступен только для ПК.',
     launcherButtonText: 'Скачать лаунчер',
     launcherComingSoon: 'Скоро будет доступен для скачивания'
