@@ -74,7 +74,7 @@ const Index = () => {
   const [partnershipSectionTitle, setPartnershipSectionTitle] = useState('Партнёрская программа');
   const [mainTexts, setMainTexts] = useState({
     siteName: 'DayS',
-    serverIP: 'dayzm.my-craft.cc.',
+    serverIP: 'dayS.mu-craft.cc.',
     copyButtonText: 'Скопировать IP',
     copiedText: 'Скопировано!'
   });
